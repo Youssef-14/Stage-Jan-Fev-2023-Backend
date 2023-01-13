@@ -22,8 +22,6 @@ namespace serverapp.Data
         public string Size { get; set; } = string.Empty;
         [Required]
         [MaxLength(50)]
-        public string Date { get; set; } = string.Empty;
-        [Required]
         public User user { get; set; }
     }
 }
