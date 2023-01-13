@@ -3,13 +3,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace serverapp.Data
 {
+    public enum Type
+    {
+        Accepté,
+        Refusé,
+        Annulé,
+        EnAttente,
+        EnCours,
+        EnAttenteDeValidation,
+    }
     internal sealed class Demande
     {
         [Key]
         public int Id { get; set; }
         [Required]
         [MaxLength(50)]
-        public string Type { get; set; } = string.Empty;
+        public Type Type { get; set; }
         [Required]
         [MaxLength(50)]
         public DateTime Date { get; set; }
