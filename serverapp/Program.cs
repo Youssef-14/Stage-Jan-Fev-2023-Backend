@@ -1,44 +1,102 @@
+using AspWebApp.Data;
+using Microsoft.OpenApi.Models;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy",
+        builder =>
+        {
+            builder
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithOrigins("https://localhost:3000");
+        });
+});
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(swaggerGenOptions =>
+{
+    swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NET React Tutorial", Version = "v1" });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(swaggerUIOptions =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    swaggerUIOptions.DocumentTitle = "ASP.NET React Tutorial";
+    swaggerUIOptions.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API serving a very simple Post model.");
+    swaggerUIOptions.RoutePrefix = string.Empty;
+});
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseCors("CORSPolicy");
 
-app.MapGet("/weatherforecast", () =>
+
+
+app.MapPut("/update-employe", async (User employeToUpdate) =>
 {
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Employes Endpoints");
+
+app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
+{
+    bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
+
+    if (deleteSuccessful)
+    {
+        return Results.Ok("Delete successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
+app.MapGet("/get-all-users", async () => await UsersRepository.GetUsersAsync())
+    .WithTags("Users Endpoints");
+
+app.MapGet("/get-user-by-id/{Id}", async (int Id) =>
+{
+    User userToReturn = await UsersRepository.GetUserByIdAsync(Id);
+
+    if (userToReturn != null)
+    {
+        return Results.Ok(userToReturn);
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
+
+app.MapPost("/create-user", async (User userToCreate) =>
+{
+    bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
+
+    if (createSuccessful)
+    {
+        return Results.Ok("Create successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

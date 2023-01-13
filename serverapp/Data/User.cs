@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using serverapp.Data;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspWebApp.Data
@@ -16,6 +17,10 @@ namespace AspWebApp.Data
         [Required]
         [MaxLength(50)]
         public string Email { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(50)]
+        [Index(IsUnique = true)]
+        public string Cin { get; set; } = string.Empty;
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
         [MaxLength(50)]
@@ -23,5 +28,7 @@ namespace AspWebApp.Data
         [Required]
         [MaxLength(50)]
         public string Password { get; set; } = string.Empty;
+        [InverseProperty("User")]
+        public ICollection<Demande> demandes  { get; set; }
     }
 }

@@ -20,8 +20,10 @@ namespace serverapp.Data
         [Required]
         [MaxLength(50)]
         public string Size { get; set; } = string.Empty;
-        [Required]
-        [MaxLength(50)]
-        public User user { get; set; }
+        [InverseProperty("files")]
+        public Demande Demande { get; set; }
+        [ForeignKey(name: "Demande")]
+        public int DemandeId { get; set; }
+        
     }
 }

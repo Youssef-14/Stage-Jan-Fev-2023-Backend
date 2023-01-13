@@ -1,11 +1,13 @@
 ﻿using AspWebApp.Data;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Web;
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace serverapp.Data
 {
+    [ApiController]
     public class FileRepository
     {
         internal async static Task<IEnumerable<File>> GetFilesAsync()
@@ -19,9 +21,15 @@ namespace serverapp.Data
         {
             using (var db = new AppDBContext())
             {
-                return await db.Files.FirstOrDefaultAsync(f => f.Id == id);
+                return await db.Files.FirstOrDefaultAsync(f => f.DemandeId == id);
             }
         }
+
+        [HttpPost]
+        [Route("files")]
+        [ProducesResponseType(typeof(File), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         internal async static Task<bool> CreateFileAsync(File file)
         {
             using (var db = new AppDBContext())
