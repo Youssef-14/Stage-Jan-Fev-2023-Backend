@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
-    swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NET React Tutorial", Version = "v1" });
+    swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NET", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -27,7 +27,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(swaggerUIOptions =>
 {
-    swaggerUIOptions.DocumentTitle = "ASP.NET React Tutorial";
+    swaggerUIOptions.DocumentTitle = "ASP.NET";
     swaggerUIOptions.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API serving a very simple Post model.");
     swaggerUIOptions.RoutePrefix = string.Empty;
 });
