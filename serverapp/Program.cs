@@ -38,7 +38,7 @@ app.UseCors("CORSPolicy");
 
 
 
-app.MapPut("/update-employe", async (User employeToUpdate) =>
+app.MapPut("/update-user", async (User employeToUpdate) =>
 {
     bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
 
@@ -85,6 +85,20 @@ app.MapGet("/get-user-by-id/{Id}", async (int Id) =>
 
 
 app.MapPost("/create-user", async (User userToCreate) =>
+{
+    bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
+
+    if (createSuccessful)
+    {
+        return Results.Ok("Create successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
+app.MapPost("/create-admin", async (User userToCreate) =>
 {
     bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
 

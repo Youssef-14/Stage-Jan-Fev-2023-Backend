@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace serverapp.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230116092311_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20230116134141_firstMigration")]
+    partial class firstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,13 +46,17 @@ namespace serverapp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
+                    b.Property<string>("Type")
+                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", t =>
+                        {
+                            t.HasCheckConstraint("CK_User_Type", "Type IN ('admin', 'user')");
+                        });
                 });
 
             modelBuilder.Entity("serverapp.Data.Demande", b =>
