@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace serverapp.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230116134141_firstMigration")]
+    [Migration("20230116143346_firstMigration")]
     partial class firstMigration
     {
         /// <inheritdoc />
@@ -52,6 +52,14 @@ namespace serverapp.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Cin")
+                        .IsUnique()
+                        .HasDatabaseName("Index1");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("Index2");
 
                     b.ToTable("Users", t =>
                         {

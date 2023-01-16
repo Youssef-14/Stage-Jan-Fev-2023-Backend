@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace serverapp.Data
 {
-    public enum Type
+    public static class TypeDemande
     {
-        Accepté,
-        Refusé,
-        Annulé,
-        EnAttente,
-        EnCours,
+        public static string Accepte = "Accepté";
+        public static string Refusé = "Refusé";
+        public static string EnCours = "En cours";
     }
     internal sealed class Demande
     {
@@ -18,7 +16,7 @@ namespace serverapp.Data
         public int Id { get; set; }
         [Required]
         [MaxLength(50)]
-        public Type Type { get; set; }
+        public string Type { get; set; }
         [Required]
         [MaxLength(50)]
         public DateTime Date { get; set; }

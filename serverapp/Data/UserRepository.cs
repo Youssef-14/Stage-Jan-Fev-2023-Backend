@@ -28,8 +28,25 @@ namespace AspWebApp.Data
         }
         internal async static Task<bool> CreateUserAsync(User user)
         {
+            user.Type = "user";
             using (var db = new AppDBContext())
             {
+                try
+                {
+                    await db.Users.AddAsync(user);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+        internal async static Task<bool> CreateAdminAsync(User user)
+        {
+            using (var db = new AppDBContext())
+            {
+                user.Type = "admin";
                 try
                 {
                     await db.Users.AddAsync(user);

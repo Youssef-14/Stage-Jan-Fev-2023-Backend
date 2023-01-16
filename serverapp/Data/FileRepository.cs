@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace serverapp.Data
 {
     [ApiController]
-    public class FileRepository
+    public static class FileRepository
     {
         internal async static Task<IEnumerable<File>> GetFilesAsync()
         {

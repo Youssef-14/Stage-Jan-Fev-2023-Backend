@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace serverapp.Data
 {
-    internal class DemandeRepository
+    internal static class DemandeRepository
     {
         internal async static Task<IEnumerable<Demande>> GetDemandesAsync()
         {
@@ -12,6 +12,29 @@ namespace serverapp.Data
                 return await db.Demandes.ToListAsync();
             }
         }
+        internal async static Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
+        {
+            using (var db = new AppDBContext())
+            {
+                return await db.Demandes.Where(e=> e.Type == TypeDemande.Accepte).ToListAsync();
+            }
+        }
+        
+        internal async static Task<IEnumerable<Demande>> GetRefusedDemandesAsync()
+        {
+            using (var db = new AppDBContext())
+            {
+                return await db.Demandes.Where(e => e.Type == TypeDemande.Refusé).ToListAsync();
+            }
+        }
+        internal async static Task<IEnumerable<Demande>> GetPendingDemandesAsync()
+        {
+            using (var db = new AppDBContext())
+            {
+                return await db.Demandes.Where(e => e.Type == TypeDemande.EnCours).ToListAsync();
+            }
+        }
+
         internal async static Task<Demande> GetDemandeByIdAsync(int id)
         {
             using (var db = new AppDBContext())

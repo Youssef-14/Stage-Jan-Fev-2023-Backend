@@ -1,6 +1,6 @@
 using AspWebApp.Data;
 using Microsoft.OpenApi.Models;
-
+using serverapp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +50,7 @@ app.MapPut("/update-user", async (User employeToUpdate) =>
     {
         return Results.BadRequest();
     }
-}).WithTags("Employes Endpoints");
+}).WithTags("Users Endpoints");
 
 app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
 {
@@ -100,7 +100,7 @@ app.MapPost("/create-user", async (User userToCreate) =>
 
 app.MapPost("/create-admin", async (User userToCreate) =>
 {
-    bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
+    bool createSuccessful = await UsersRepository.CreateAdminAsync(userToCreate);
 
     if (createSuccessful)
     {
@@ -111,6 +111,9 @@ app.MapPost("/create-admin", async (User userToCreate) =>
         return Results.BadRequest();
     }
 }).WithTags("Users Endpoints");
+
+app.MapGet("/get-all-demandes", async () => await DemandeRepository.GetDemandesAsync())
+    .WithTags("Users Endpoints");
 
 
 app.Run();

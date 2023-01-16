@@ -50,6 +50,14 @@ namespace serverapp.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Cin")
+                        .IsUnique()
+                        .HasDatabaseName("Index1");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("Index2");
+
                     b.ToTable("Users", t =>
                         {
                             t.HasCheckConstraint("CK_User_Type", "Type IN ('admin', 'user')");

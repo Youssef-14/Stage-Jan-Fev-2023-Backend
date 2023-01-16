@@ -84,6 +84,18 @@ namespace serverapp.Migrations
                 name: "IX_Files_DemandeId",
                 table: "Files",
                 column: "DemandeId");
+
+            migrationBuilder.CreateIndex(
+                name: "Index1",
+                table: "Users",
+                column: "Cin",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "Index2",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
