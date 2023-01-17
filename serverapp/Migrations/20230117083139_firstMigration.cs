@@ -35,7 +35,7 @@ namespace serverapp.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Type = table.Column<int>(type: "INTEGER", maxLength: 50, nullable: false),
+                    Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Date = table.Column<DateTime>(type: "TEXT", maxLength: 50, nullable: false),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     Status = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
@@ -44,6 +44,7 @@ namespace serverapp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Demandes", x => x.Id);
+                    table.CheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
                     table.ForeignKey(
                         name: "FK_Demandes_Users_UserId",
                         column: x => x.UserId,

@@ -16,7 +16,7 @@ namespace AspWebApp.Data
         [Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Demande>().HasCheckConstraint("CK_Demande_Type", "Type IN ('accepté', 'refusé','encours', 'refusé')");
+            modelBuilder.Entity<Demande>().HasCheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
             modelBuilder.Entity<User>().HasCheckConstraint("CK_User_Type", "Type IN ('admin', 'user')");
             modelBuilder.Entity<User>().HasIndex(m => m.Cin)
                                      .HasName("Index1")

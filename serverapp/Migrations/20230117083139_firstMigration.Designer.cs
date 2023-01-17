@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace serverapp.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230116143346_firstMigration")]
+    [Migration("20230117083139_firstMigration")]
     partial class firstMigration
     {
         /// <inheritdoc />
@@ -87,9 +87,10 @@ namespace serverapp.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
+                    b.Property<string>("Type")
+                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
@@ -98,7 +99,10 @@ namespace serverapp.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Demandes");
+                    b.ToTable("Demandes", t =>
+                        {
+                            t.HasCheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
+                        });
                 });
 
             modelBuilder.Entity("serverapp.Data.File", b =>

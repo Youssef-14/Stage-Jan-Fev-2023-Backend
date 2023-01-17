@@ -6,9 +6,11 @@ namespace serverapp.Data
 {
     public static class TypeDemande
     {
-        public static string Accepte = "Accepté";
-        public static string Refusé = "Refusé";
-        public static string EnCours = "En cours";
+        public static string Accepte = "accepté";
+        public static string Refusé = "refusé";
+        public static string EnCours = "encours";
+        public static string Acorriger = "àcorriger";
+
     }
     internal sealed class Demande
     {
