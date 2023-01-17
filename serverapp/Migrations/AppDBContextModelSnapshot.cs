@@ -98,7 +98,7 @@ namespace serverapp.Migrations
 
                     b.ToTable("Demandes", t =>
                         {
-                            t.HasCheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
+                            t.HasCheckConstraint("CK_Demande_Status", "Status IN ( 'accepté', 'encours', 'refusé','àcorriger')");
                         });
                 });
 

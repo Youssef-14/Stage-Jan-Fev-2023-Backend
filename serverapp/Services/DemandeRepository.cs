@@ -1,7 +1,8 @@
 ﻿using AspWebApp.Data;
 using Microsoft.EntityFrameworkCore;
+using serverapp.Data;
 
-namespace serverapp.Data
+namespace serverapp.Services
 {
     internal static class DemandeRepository
     {
@@ -13,12 +14,20 @@ namespace serverapp.Data
                 return await db.Demandes.ToListAsync();
             }
         }
+        //same as above but only for the demandes of a specific user
+        internal async static Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
+        {
+            using (var db = new AppDBContext())
+            {
+                return await db.Demandes.Where(d => d.UserId == userid).ToListAsync();
+            }
+        }
         //method that returns accepted demands
         internal async static Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
         {
             using (var db = new AppDBContext())
             {
-                return await db.Demandes.Where(e=> e.Type == TypeDemande.Accepte).ToListAsync();
+                return await db.Demandes.Where(d => d.Type == TypeDemande.Accepte).ToListAsync();
             }
         }
         //method that returns refused demands
@@ -52,13 +61,6 @@ namespace serverapp.Data
             using (var db = new AppDBContext())
             {
                 return await db.Demandes.FirstOrDefaultAsync(d => d.Id == id);
-            }
-        }
-        internal async static Task<Demande> GetDemandsByUserIdAsync(int userid)
-        {
-            using (var db = new AppDBContext())
-            {
-                return await db.Demandes.FirstOrDefaultAsync(d => d.UserId == userid);
             }
         }
 

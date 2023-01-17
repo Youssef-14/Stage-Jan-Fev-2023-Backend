@@ -10,7 +10,6 @@ namespace serverapp.Data
         public static string Refusé = "refusé";
         public static string EnCours = "encours";
         public static string Acorriger = "àcorriger";
-
     }
     internal sealed class Demande
     {

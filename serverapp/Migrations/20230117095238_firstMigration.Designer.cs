@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace serverapp.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230117083139_firstMigration")]
+    [Migration("20230117095238_firstMigration")]
     partial class firstMigration
     {
         /// <inheritdoc />
@@ -101,7 +101,7 @@ namespace serverapp.Migrations
 
                     b.ToTable("Demandes", t =>
                         {
-                            t.HasCheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
+                            t.HasCheckConstraint("CK_Demande_Status", "Status IN ( 'accepté', 'encours', 'refusé','àcorriger')");
                         });
                 });
 

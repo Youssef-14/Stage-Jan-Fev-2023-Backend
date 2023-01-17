@@ -44,7 +44,7 @@ namespace serverapp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Demandes", x => x.Id);
-                    table.CheckConstraint("CK_Demande_Type", "Type IN ( 'accepté', 'encours', 'refusé','àcorriger')");
+                    table.CheckConstraint("CK_Demande_Status", "Status IN ( 'accepté', 'encours', 'refusé','àcorriger')");
                     table.ForeignKey(
                         name: "FK_Demandes_Users_UserId",
                         column: x => x.UserId,

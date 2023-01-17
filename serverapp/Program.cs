@@ -1,6 +1,7 @@
 using AspWebApp.Data;
 using Microsoft.OpenApi.Models;
 using serverapp.Data;
+using serverapp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,34 +38,8 @@ app.UseHttpsRedirection();
 app.UseCors("CORSPolicy");
 
 
-
-app.MapPut("/update-user", async (User employeToUpdate) =>
-{
-    bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
-{
-    bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
-
-    if (deleteSuccessful)
-    {
-        return Results.Ok("Delete successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
+// User Controller 
+// User Controller 
 
 app.MapGet("/get-all-users", async () => await UsersRepository.GetUsersAsync())
     .WithTags("Users Endpoints");
@@ -82,7 +57,6 @@ app.MapGet("/get-user-by-id/{Id}", async (int Id) =>
         return Results.BadRequest();
     }
 }).WithTags("Users Endpoints");
-
 
 app.MapPost("/create-user", async (User userToCreate) =>
 {
@@ -112,8 +86,105 @@ app.MapPost("/create-admin", async (User userToCreate) =>
     }
 }).WithTags("Users Endpoints");
 
+app.MapPut("/update-user", async (User employeToUpdate) =>
+{
+    bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
+app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
+{
+    bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
+
+    if (deleteSuccessful)
+    {
+        return Results.Ok("Delete successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
+//Department Controller
+//Department Controller
+
 app.MapGet("/get-all-demandes", async () => await DemandeRepository.GetDemandesAsync())
-    .WithTags("Users Endpoints");
+    .WithTags("Demands Endpoints");
+app.MapGet("/get-all-demandes-by-user/{Id}", async (int Id) => await DemandeRepository.GetDemandsByUserIdAsync(Id))
+    .WithTags("Demands Endpoints");
+
+app.MapGet("/get-all-accepted-demands", async () => await DemandeRepository.GetAcceptedDemandesAsync())
+    .WithTags("Demands Endpoints");
+
+app.MapGet("/get-all-rejected-demands", async () => await DemandeRepository.GetRefusedDemandesAsync())
+    .WithTags("Demands Endpoints");
+app.MapGet("/get-all-pending-demands", async () => await DemandeRepository.GetPendingDemandesAsync())
+    .WithTags("Demands Endpoints");
+
+app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
+{
+    Demande demandeToReturn = await DemandeRepository.GetDemandeByIdAsync(Id);
+
+    if (demandeToReturn != null)
+    {
+        return Results.Ok(demandeToReturn);
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+app.MapPost("/create-demande", async (Demande demandeToCreate) =>
+{
+    bool createSuccessful = await DemandeRepository.CreateDemandeAsync(demandeToCreate);
+
+    if (createSuccessful)
+    {
+        return Results.Ok("Create successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
+{
+    bool updateSuccessful = await DemandeRepository.UpdateDemandeAsync(demandeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>
+{
+    bool deleteSuccessful = await DemandeRepository.DeleteDemandeAsync(Id);
+
+    if (deleteSuccessful)
+    {
+        return Results.Ok("Delete successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
 
 
 app.Run();

@@ -4,20 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
+using serverapp.Data;
 
-namespace serverapp.Data
+namespace serverapp.Services
 {
     [ApiController]
     public static class FileRepository
     {
-        internal async static Task<IEnumerable<File>> GetFilesAsync()
+        internal async static Task<IEnumerable<Data.File>> GetFilesAsync()
         {
             using (var db = new AppDBContext())
             {
                 return await db.Files.ToListAsync();
             }
         }
-        internal async static Task<File> GetFileByIdAsync(int id)
+        internal async static Task<Data.File> GetFileByIdAsync(int id)
         {
             using (var db = new AppDBContext())
             {
@@ -27,10 +28,10 @@ namespace serverapp.Data
 
         [HttpPost]
         [Route("files")]
-        [ProducesResponseType(typeof(File), 200)]
+        [ProducesResponseType(typeof(Data.File), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        internal async static Task<bool> CreateFileAsync(File file)
+        internal async static Task<bool> CreateFileAsync(Data.File file)
         {
             using (var db = new AppDBContext())
             {
@@ -45,7 +46,7 @@ namespace serverapp.Data
                 }
             }
         }
-        internal async static Task<bool> UpdateFileAsync(File file)
+        internal async static Task<bool> UpdateFileAsync(Data.File file)
         {
             using (var db = new AppDBContext())
             {

@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AspWebApp.Data;
+using Microsoft.EntityFrameworkCore;
 
 
-namespace AspWebApp.Data
+namespace serverapp.Services
 {
     internal static class UsersRepository
     {
