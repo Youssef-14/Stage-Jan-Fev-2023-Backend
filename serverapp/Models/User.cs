@@ -22,7 +22,7 @@ namespace AspWebApp.Data
         
         public string Type { get; set; }
         [Required]
-        [MaxLength(50)]
+        [MaxLength(50)] 
         public string Password { get; set; } = string.Empty;
         [InverseProperty("User")]
         public ICollection<Demande> demandes  { get; set; }

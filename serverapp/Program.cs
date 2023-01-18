@@ -172,6 +172,49 @@ app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
     }
 }).WithTags("Demands Endpoints");
 
+app.MapPut("/set-demande-to-accepted", async (Demande demandeToUpdate) =>
+{
+    bool updateSuccessful = await DemandeRepository.SetDemandeToAcceptedAsync(demandeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+app.MapPut("/set-demande-to-refused", async (Demande demandeToUpdate) =>
+{
+    bool updateSuccessful = await DemandeRepository.SetDemandeToRefusedAsync(demandeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
+{
+    bool updateSuccessful = await DemandeRepository.SetDemandeToPendingAsync(demandeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Demands Endpoints");
+
+
 app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>
 {
     bool deleteSuccessful = await DemandeRepository.DeleteDemandeAsync(Id);

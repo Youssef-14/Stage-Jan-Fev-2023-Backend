@@ -94,6 +94,56 @@ namespace serverapp.Services
                 }
             }
         }
+        internal async static Task<bool> SetDemandeToAcceptedAsync(Demande demande)
+        {
+            using (var db = new AppDBContext())
+            {
+                try
+                {
+                    demande.Status = "accepté";
+                    db.Demandes.Update(demande);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+        internal async static Task<bool> SetDemandeToRefusedAsync(Demande demande)
+        {
+            using (var db = new AppDBContext())
+            {
+                try
+                {
+                    demande.Status = "refusé";
+                    db.Demandes.Update(demande);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal async static Task<bool> SetDemandeToPendingAsync(Demande demande)
+        {
+            using (var db = new AppDBContext())
+            {
+                try
+                {
+                    demande.Status = "encours";
+                    db.Demandes.Update(demande);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
         internal async static Task<bool> DeleteDemandeAsync(int id)
         {
             using (var db = new AppDBContext())
