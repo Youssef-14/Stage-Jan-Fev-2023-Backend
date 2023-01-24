@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace serverapp.Data
 {
-    public static class TypeDemande
+    public static class StatusDemande
     {
         public static string Accepte = "accepté";
         public static string Refusé = "refusé";
@@ -17,7 +17,7 @@ namespace serverapp.Data
         public int Id { get; set; }
         [Required]
         [MaxLength(50)]
-        public string Type { get; set; }
+        public string type { get; set; }
         [Required]
         [MaxLength(50)]
         public DateTime Date { get; set; }
@@ -25,10 +25,8 @@ namespace serverapp.Data
         public User User { get; set; }
         [ForeignKey(name: "User")]
         public int UserId { get; set; }
-        [Required]
         [MaxLength(50)]
         public string Status { get; set; } = string.Empty;
-        [Required]
         [MaxLength(50)]
         public string Comment { get; set; } = string.Empty;
         public ICollection<File> Files { get; set; }

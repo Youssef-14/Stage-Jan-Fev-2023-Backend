@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")]
+[ApiController]
 public class ValuesController : ControllerBase
 {
     // GET api/values
@@ -36,3 +36,4 @@ public class ValuesController : ControllerBase
     {
     }
 }
+*/

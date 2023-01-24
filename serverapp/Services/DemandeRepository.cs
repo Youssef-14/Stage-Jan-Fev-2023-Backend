@@ -22,12 +22,33 @@ namespace serverapp.Services
                 return await db.Demandes.Where(d => d.UserId == userid).ToListAsync();
             }
         }
+        //Filter
+        internal async static Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end)
+        {
+            using (var db = new AppDBContext())
+            {
+                if (type == status)
+                {
+                    return await db.Demandes.ToListAsync();
+                }
+                if (type == "all")
+                {
+                    return await db.Demandes.Where(d => d.Status == status).ToListAsync();
+                }
+                if (status == "all")
+                {
+                    return await db.Demandes.Where(t => t.type == type).ToListAsync();
+                }
+                
+                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).ToListAsync();
+            }
+        }
         //method that returns accepted demands
         internal async static Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
         {
             using (var db = new AppDBContext())
             {
-                return await db.Demandes.Where(d => d.Type == TypeDemande.Accepte).ToListAsync();
+                return await db.Demandes.Where(d => d.Status == StatusDemande.Accepte).ToListAsync();
             }
         }
         //method that returns refused demands
@@ -35,7 +56,7 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
-                return await db.Demandes.Where(e => e.Type == TypeDemande.Refusé).ToListAsync();
+                return await db.Demandes.Where(e => e.Status == StatusDemande.Refusé).ToListAsync();
             }
         }
         //method that returns demands in progress
@@ -43,7 +64,7 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
-                return await db.Demandes.Where(e => e.Type == TypeDemande.EnCours).ToListAsync();
+                return await db.Demandes.Where(e => e.Status == StatusDemande.EnCours).ToListAsync();
             }
         }
         //method that returns demands to be corrected
@@ -51,7 +72,7 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
-                return await db.Demandes.Where(e => e.Type == TypeDemande.Acorriger).ToListAsync();
+                return await db.Demandes.Where(e => e.Status == StatusDemande.Acorriger).ToListAsync();
             }
         }
         //method that returns a demand by its id
@@ -70,6 +91,7 @@ namespace serverapp.Services
             {
                 try
                 {
+                    demande.Status = StatusDemande.EnCours;
                     await db.Demandes.AddAsync(demande);
                     return await db.SaveChangesAsync() >= 1;
                 }
@@ -134,6 +156,22 @@ namespace serverapp.Services
                 try
                 {
                     demande.Status = "encours";
+                    db.Demandes.Update(demande);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+        internal async static Task<bool> SetDemandeToBeCorrectedAsync(Demande demande)
+        {
+            using (var db = new AppDBContext())
+            {
+                try
+                {
+                    demande.Status = "àcorriger";
                     db.Demandes.Update(demande);
                     return await db.SaveChangesAsync() >= 1;
                 }

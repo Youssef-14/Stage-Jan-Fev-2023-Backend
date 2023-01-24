@@ -17,6 +17,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+
+builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
@@ -24,6 +27,8 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 });
 
 var app = builder.Build();
+
+app.MapControllers();
 
 app.UseSwagger();
 app.UseSwaggerUI(swaggerUIOptions =>
@@ -57,6 +62,21 @@ app.MapGet("/get-user-by-id/{Id}", async (int Id) =>
         return Results.BadRequest();
     }
 }).WithTags("Users Endpoints");
+
+app.MapGet("/get-user-by-email-and-password/{email}/{password}", async (string email, string password) =>
+{
+    User userToReturn = await UsersRepository.GetUserByEmailAndPasswordAsync(email, password);
+
+    if (userToReturn != null)
+    {
+        return Results.Ok(userToReturn);
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
 
 app.MapPost("/create-user", async (User userToCreate) =>
 {
@@ -128,6 +148,10 @@ app.MapGet("/get-all-accepted-demands", async () => await DemandeRepository.GetA
 app.MapGet("/get-all-rejected-demands", async () => await DemandeRepository.GetRefusedDemandesAsync())
     .WithTags("Demands Endpoints");
 app.MapGet("/get-all-pending-demands", async () => await DemandeRepository.GetPendingDemandesAsync())
+    .WithTags("Demands Endpoints");
+
+app.MapGet("/get-filtered-demands/{type}/{status}/{begin}/{end}", async (string type, string status, int begin, int end) =>
+     await DemandeRepository.GetFilteredDemandesAsync(type, status, begin, end))
     .WithTags("Demands Endpoints");
 
 app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
@@ -213,6 +237,20 @@ app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
         return Results.BadRequest();
     }
 }).WithTags("Demands Endpoints");
+
+    app.MapPut("/set-demande-to-be-corrected", async (Demande demandeToUpdate) =>
+    {
+        bool updateSuccessful = await DemandeRepository.SetDemandeToBeCorrectedAsync(demandeToUpdate);
+
+        if (updateSuccessful)
+        {
+            return Results.Ok("Update successful.");
+        }
+        else
+        {
+            return Results.BadRequest();
+        }
+    }).WithTags("Demands Endpoints");
 
 
 app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>

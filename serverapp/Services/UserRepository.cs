@@ -17,17 +17,40 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
-                return await db.Users.FirstOrDefaultAsync(u => u.Id == id);
-            }
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
+                if (user == null)
+                {
+                    return new User();
+                }
+                return user;
+            }   
         }
         internal async static Task<User> GetUserByEmailAsync(string email)
         {
             using (var db = new AppDBContext())
             {
-                return await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+                if (user == null)
+                {
+                    return new User();
+                }
+                return user;
             }
         }
-        internal async static Task<bool> CreateUserAsync(User user)
+        internal async static Task<User> GetUserByEmailAndPasswordAsync(string? email,string? password)
+        {
+            using (var db = new AppDBContext())
+            {
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+                if (user == null)
+                {
+                    return new User();
+                }
+                return user;
+            }
+                
+        }
+        public async static Task<bool> CreateUserAsync(User user)
         {
             user.Type = "user";
             using (var db = new AppDBContext())
@@ -63,6 +86,7 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
+                user.Type = "user";
                 try
                 {
                     db.Users.Update(user);
