@@ -1,6 +1,7 @@
 ﻿using AspWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using serverapp.Data;
+using System.Collections.ObjectModel;
 
 namespace serverapp.Services
 {
@@ -12,6 +13,26 @@ namespace serverapp.Services
             using (var db = new AppDBContext())
             {
                 return await db.Demandes.ToListAsync();
+            }
+        }
+
+        internal async static Task<int> GetDemandesFilteredNumber(string type, string status)
+        {
+            using (var db = new AppDBContext())
+            {
+                if (type == status)
+                {
+                    return await db.Demandes.CountAsync();
+                }
+                if (type == "all")
+                {
+                    return await db.Demandes.Where(d => d.Status == status).CountAsync();
+                }
+                if (status == "all")
+                {
+                    return await db.Demandes.Where(t => t.type == type).CountAsync();
+                }
+                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).CountAsync();
             }
         }
         //same as above but only for the demandes of a specific user
@@ -29,18 +50,17 @@ namespace serverapp.Services
             {
                 if (type == status)
                 {
-                    return await db.Demandes.ToListAsync();
+                    return await db.Demandes.Skip(begin).Take(end).ToListAsync();
                 }
                 if (type == "all")
                 {
-                    return await db.Demandes.Where(d => d.Status == status).ToListAsync();
+                    return await db.Demandes.Where(d => d.Status == status).Skip(begin).Take(end).ToListAsync();
                 }
                 if (status == "all")
                 {
-                    return await db.Demandes.Where(t => t.type == type).ToListAsync();
+                    return await db.Demandes.Where(t => t.type == type).Skip(begin).Take(end).ToListAsync();
                 }
-                
-                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).ToListAsync();
+                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).Skip(begin).Take(end).ToListAsync();
             }
         }
         //method that returns accepted demands

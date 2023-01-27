@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace serverapp.Controllers
 {
@@ -9,23 +8,29 @@ namespace serverapp.Controllers
     public class Test : ControllerBase
     {
         [HttpPost]
-        [Route("upload")]
+        [Route("upload/{dossier}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> UploadFile(IFormFile file, CancellationToken cancelalationToken)
+        public async Task<IActionResult> UploadFile(string dossier,IFormFile file)
         {
-            await WriteFile(file);
+            await WriteFile(dossier,file);
             return Ok();
         }
-        private async Task<bool> WriteFile(IFormFile file)
+        private async Task<bool> WriteFile(string dossier,IFormFile file)
         {
             bool result = false;
             string filename;
             try
             {
                 filename = Path.GetFileName(file.FileName);
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "uploads", filename);
-                using (var stream = new FileStream(path, FileMode.Create))  
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\"+dossier);
+
+                if(!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                using (var stream = new FileStream(Path.Combine(path, filename) , FileMode.Create))  
                 {
                     await file.CopyToAsync(stream);
                 }
@@ -38,5 +43,37 @@ namespace serverapp.Controllers
             }
             return result;
         }
+        [HttpGet]
+        [Route("download/{dossier}/{filename}")]
+        public IActionResult DownloadFile(string dossier, string filename)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier, filename);
+            var fileStream = new FileStream(filePath, FileMode.Open);
+            return File(fileStream, "application/octet-stream", filename);
+        }
+        [HttpGet]
+        [Route("getfiles/{dossier}")]
+        public IActionResult GetFiles(string dossier)
+        {
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier);
+            var fileNames = Directory.GetFiles(directoryPath);
+            return Ok(fileNames);
+        }
+        [HttpDelete]
+        [Route("delete/{dossier}/{filename}")]
+        public IActionResult DeleteFile(string dossier, string filename)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier, filename);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+                return Ok("File deleted successfully");
+            }
+            else
+            {
+                return NotFound("File not found");
+            }
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace serverapp.Security
 {
-    public class JWT
+    internal class JWT
     {
         public string Key { get; set; }
         public string Issuer { get; set; }

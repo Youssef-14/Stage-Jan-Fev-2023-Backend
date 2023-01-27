@@ -98,6 +98,22 @@ namespace serverapp.Services
                 }
             }
         }
+        internal async static Task<bool> UpdateAdminAsync(User user)
+        {
+            using (var db = new AppDBContext())
+            {
+                user.Type = "admin";
+                try
+                {
+                    db.Users.Update(user);
+                    return await db.SaveChangesAsync() >= 1;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
         internal async static Task<bool> DeleteUserAsync(int id)
         {
             using (var db = new AppDBContext())

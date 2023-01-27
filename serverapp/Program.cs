@@ -1,7 +1,13 @@
 using AspWebApp.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using serverapp.Data;
+using serverapp.Security;
 using serverapp.Services;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using TestApiJWT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +26,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swaggerGenOptions =>
 {
@@ -27,6 +35,32 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
 });
 
 var app = builder.Build();
+
+//builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+
+
+
+/*builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.SaveToken = false;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidIssuer = builder.Configuration["JWT:Issuer"],
+                        ValidAudience = builder.Configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                    };
+                });*/
+
 
 app.MapControllers();
 
@@ -45,6 +79,19 @@ app.UseCors("CORSPolicy");
 
 // User Controller 
 // User Controller 
+/*
+getDataLength = () => {
+axios
+    .get("https://localhost:7095/get-demandes-filtered-number/" + this.state.filter_type + "/" + this.state.filter_status)
+    .then(response => {
+        this.state.data_length = response.data;
+        console.log(this.state.data_length);
+        this.fetchData();
+    })
+    .catch (error => {
+    console.error(error);
+});
+}*/
 
 app.MapGet("/get-all-users", async () => await UsersRepository.GetUsersAsync())
     .WithTags("Users Endpoints");
@@ -120,6 +167,20 @@ app.MapPut("/update-user", async (User employeToUpdate) =>
     }
 }).WithTags("Users Endpoints");
 
+app.MapPut("/update-admin", async (User employeToUpdate) =>
+{
+    bool updateSuccessful = await UsersRepository.UpdateAdminAsync(employeToUpdate);
+
+    if (updateSuccessful)
+    {
+        return Results.Ok("Update successful.");
+    }
+    else
+    {
+        return Results.BadRequest();
+    }
+}).WithTags("Users Endpoints");
+
 app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
 {
     bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
@@ -138,6 +199,8 @@ app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
 //Department Controller
 
 app.MapGet("/get-all-demandes", async () => await DemandeRepository.GetDemandesAsync())
+    .WithTags("Demands Endpoints");
+app.MapGet("/get-demandes-filtered-number/{type}/{status}", async (string type, string status) => await DemandeRepository.GetDemandesFilteredNumber(type, status))
     .WithTags("Demands Endpoints");
 app.MapGet("/get-all-demandes-by-user/{Id}", async (int Id) => await DemandeRepository.GetDemandsByUserIdAsync(Id))
     .WithTags("Demands Endpoints");
@@ -267,5 +330,8 @@ app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>
     }
 }).WithTags("Demands Endpoints");
 
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
