@@ -16,6 +16,18 @@ namespace serverapp.Controllers
             await WriteFile(dossier,file);
             return Ok();
         }
+        [HttpPost]
+        [Route("uploads/{dossier}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> UploadFiles(string dossier, List<IFormFile> files)
+        {
+            foreach (var file in files)
+            {
+                await WriteFile(dossier, file);
+            }
+            return Ok();
+        }
         private async Task<bool> WriteFile(string dossier,IFormFile file)
         {
             bool result = false;
@@ -43,6 +55,8 @@ namespace serverapp.Controllers
             }
             return result;
         }
+        
+
         [HttpGet]
         [Route("download/{dossier}/{filename}")]
         public IActionResult DownloadFile(string dossier, string filename)
