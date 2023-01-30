@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IO;
-
+using System.IO.Compression;
 
 namespace serverapp.Controllers
 {
@@ -66,12 +66,22 @@ namespace serverapp.Controllers
             return File(fileStream, "application/octet-stream", filename);
         }
         [HttpGet]
-        [Route("getfiles/{dossier}")]
-        public IActionResult GetFiles(string dossier)
+        [Route("downloads/{dossier}")]
+        public IActionResult DownloadDirectory(string dossier)
         {
             var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier);
-            var fileNames = Directory.GetFiles(directoryPath);
-            return Ok(fileNames);
+            var memoryStream = new MemoryStream();
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+            {
+                var files = Directory.GetFiles(directoryPath);
+                foreach (var file in files)
+                {
+                    archive.CreateEntryFromFile(file, Path.GetFileName(file))   ;
+                }
+            }
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            return File(memoryStream, "application/zip", $"{dossier}.zip");
         }
         [HttpDelete]
         [Route("delete/{dossier}/{filename}")]
@@ -86,6 +96,25 @@ namespace serverapp.Controllers
             else
             {
                 return NotFound("File not found");
+            }
+        }
+        [HttpDelete]
+        [Route("deletes/{dossier}")]
+        public IActionResult DeleteAllFiles(string dossier)
+        {
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier);
+            if (Directory.Exists(directoryPath))
+            {
+                string[] files = Directory.GetFiles(directoryPath);
+                foreach (var file in files)
+                {
+                    System.IO.File.Delete(file);
+                }
+                return Ok("Files deleted successfully");
+            }
+            else
+            {
+                return NotFound("Directory not found");
             }
         }
 
