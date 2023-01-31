@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace serverapp.Services
 {
-    internal static class UsersRepository
+    internal static class UsersService
     {
         internal async static Task<IEnumerable<User>> GetUsersAsync()
         {
@@ -37,11 +37,12 @@ namespace serverapp.Services
                 return user;
             }
         }
-        internal async static Task<User> GetUserByEmailAndPasswordAsync(string? email,string? password)
+        internal async static Task<User> GetUserByEmailAndPasswordAsync(string email,string password)
         {
             using (var db = new AppDBContext())
             {
-                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+
+                var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email &&  PasswordHasher.HashPassword(password)== u.Password);
                 if (user == null)
                 {
                     return null;
@@ -53,6 +54,7 @@ namespace serverapp.Services
         public async static Task<bool> CreateUserAsync(User user)
         {
             user.Type = "user";
+            user.Password = PasswordHasher.HashPassword(user.Password);
             using (var db = new AppDBContext())
             {
                 try

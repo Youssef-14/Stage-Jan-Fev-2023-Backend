@@ -78,28 +78,28 @@ app.UseCors("CORSPolicy");
 //Department Controller
 //Department Controller
 
-app.MapGet("/get-all-demandes", async () => await DemandeRepository.GetDemandesAsync())
+app.MapGet("/get-all-demandes", async () => await DemandeService.GetDemandesAsync())
     .WithTags("Demands Endpoints");
-app.MapGet("/get-demandes-filtered-number/{type}/{status}", async (string type, string status) => await DemandeRepository.GetDemandesFilteredNumber(type, status))
+app.MapGet("/get-demandes-filtered-number/{type}/{status}", async (string type, string status) => await DemandeService.GetDemandesFilteredNumber(type, status))
     .WithTags("Demands Endpoints");
-app.MapGet("/get-all-demandes-by-user/{Id}", async (int Id) => await DemandeRepository.GetDemandsByUserIdAsync(Id))
-    .WithTags("Demands Endpoints");
-
-app.MapGet("/get-all-accepted-demands", async () => await DemandeRepository.GetAcceptedDemandesAsync())
+app.MapGet("/get-all-demandes-by-user/{Id}", async (int Id) => await DemandeService.GetDemandsByUserIdAsync(Id))
     .WithTags("Demands Endpoints");
 
-app.MapGet("/get-all-rejected-demands", async () => await DemandeRepository.GetRefusedDemandesAsync())
+app.MapGet("/get-all-accepted-demands", async () => await DemandeService.GetAcceptedDemandesAsync())
     .WithTags("Demands Endpoints");
-app.MapGet("/get-all-pending-demands", async () => await DemandeRepository.GetPendingDemandesAsync())
+
+app.MapGet("/get-all-rejected-demands", async () => await DemandeService.GetRefusedDemandesAsync())
+    .WithTags("Demands Endpoints");
+app.MapGet("/get-all-pending-demands", async () => await DemandeService.GetPendingDemandesAsync())
     .WithTags("Demands Endpoints");
 
 app.MapGet("/get-filtered-demands/{type}/{status}/{begin}/{end}", async (string type, string status, int begin, int end) =>
-     await DemandeRepository.GetFilteredDemandesAsync(type, status, begin, end))
+     await DemandeService.GetFilteredDemandesAsync(type, status, begin, end))
     .WithTags("Demands Endpoints");
 
 app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
 {
-    Demande demandeToReturn = await DemandeRepository.GetDemandeByIdAsync(Id);
+    Demande demandeToReturn = await DemandeService.GetDemandeByIdAsync(Id);
 
     if (demandeToReturn != null)
     {
@@ -113,7 +113,7 @@ app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
 
 app.MapPost("/create-demande", async (Demande demandeToCreate) =>
 {
-    bool createSuccessful = await DemandeRepository.CreateDemandeAsync(demandeToCreate);
+    bool createSuccessful = await DemandeService.CreateDemandeAsync(demandeToCreate);
 
     if (createSuccessful)
     {
@@ -127,7 +127,7 @@ app.MapPost("/create-demande", async (Demande demandeToCreate) =>
 
 app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
 {
-    bool updateSuccessful = await DemandeRepository.UpdateDemandeAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.UpdateDemandeAsync(demandeToUpdate);
 
     if (updateSuccessful)
     {
@@ -141,7 +141,7 @@ app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
 
 app.MapPut("/set-demande-to-accepted", async (Demande demandeToUpdate) =>
 {
-    bool updateSuccessful = await DemandeRepository.SetDemandeToAcceptedAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToAcceptedAsync(demandeToUpdate);
 
     if (updateSuccessful)
     {
@@ -155,7 +155,7 @@ app.MapPut("/set-demande-to-accepted", async (Demande demandeToUpdate) =>
 
 app.MapPut("/set-demande-to-refused", async (Demande demandeToUpdate) =>
 {
-    bool updateSuccessful = await DemandeRepository.SetDemandeToRefusedAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToRefusedAsync(demandeToUpdate);
 
     if (updateSuccessful)
     {
@@ -169,7 +169,7 @@ app.MapPut("/set-demande-to-refused", async (Demande demandeToUpdate) =>
 
 app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
 {
-    bool updateSuccessful = await DemandeRepository.SetDemandeToPendingAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToPendingAsync(demandeToUpdate);
 
     if (updateSuccessful)
     {
@@ -183,7 +183,7 @@ app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
 
     app.MapPut("/set-demande-to-be-corrected", async (Demande demandeToUpdate) =>
     {
-        bool updateSuccessful = await DemandeRepository.SetDemandeToBeCorrectedAsync(demandeToUpdate);
+        bool updateSuccessful = await DemandeService.SetDemandeToBeCorrectedAsync(demandeToUpdate);
 
         if (updateSuccessful)
         {
@@ -198,7 +198,7 @@ app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
 
 app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>
 {
-    bool deleteSuccessful = await DemandeRepository.DeleteDemandeAsync(Id);
+    bool deleteSuccessful = await DemandeService.DeleteDemandeAsync(Id);
 
     if (deleteSuccessful)
     {

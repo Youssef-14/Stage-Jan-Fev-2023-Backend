@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace serverapp.Services
 {
-    internal static class DemandeRepository
+    internal static class DemandeService
     {
         //method that returns all the demandes
         internal async static Task<IEnumerable<Demande>> GetDemandesAsync()
@@ -18,22 +18,20 @@ namespace serverapp.Services
 
         internal async static Task<int> GetDemandesFilteredNumber(string type, string status)
         {
-            using (var db = new AppDBContext())
+            using var db = new AppDBContext();
+            if (type == status)
             {
-                if (type == status)
-                {
-                    return await db.Demandes.CountAsync();
-                }
-                if (type == "all")
-                {
-                    return await db.Demandes.Where(d => d.Status == status).CountAsync();
-                }
-                if (status == "all")
-                {
-                    return await db.Demandes.Where(t => t.type == type).CountAsync();
-                }
-                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).CountAsync();
+                return await db.Demandes.CountAsync();
             }
+            if (type == "all")
+            {
+                return await db.Demandes.Where(d => d.Status == status).CountAsync();
+            }
+            if (status == "all")
+            {
+                return await db.Demandes.Where(t => t.type == type).CountAsync();
+            }
+            return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).CountAsync();
         }
         //same as above but only for the demandes of a specific user
         internal async static Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
@@ -46,10 +44,8 @@ namespace serverapp.Services
         //Filter
         internal async static Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end)
         {
-            using (var db = new AppDBContext())
-            {
-                return await db.Demandes.Where(d => (status=="all" || d.Status == status) && (type == "all" || d.type == type)).Skip(begin).Take(end).ToListAsync();
-            }
+            using var db = new AppDBContext();
+            return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).Skip(begin).Take(end).ToListAsync();
         }
         //method that returns accepted demands
         internal async static Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
