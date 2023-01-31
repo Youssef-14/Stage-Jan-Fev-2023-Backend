@@ -48,19 +48,7 @@ namespace serverapp.Services
         {
             using (var db = new AppDBContext())
             {
-                if (type == status)
-                {
-                    return await db.Demandes.Skip(begin).Take(end).ToListAsync();
-                }
-                if (type == "all")
-                {
-                    return await db.Demandes.Where(d => d.Status == status).Skip(begin).Take(end).ToListAsync();
-                }
-                if (status == "all")
-                {
-                    return await db.Demandes.Where(t => t.type == type).Skip(begin).Take(end).ToListAsync();
-                }
-                return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).Skip(begin).Take(end).ToListAsync();
+                return await db.Demandes.Where(d => (status=="all" || d.Status == status) && (type == "all" || d.type == type)).Skip(begin).Take(end).ToListAsync();
             }
         }
         //method that returns accepted demands
@@ -113,7 +101,8 @@ namespace serverapp.Services
                 {
                     demande.Status = StatusDemande.EnCours;
                     await db.Demandes.AddAsync(demande);
-                    return await db.SaveChangesAsync() >= 1;
+                    var result = await db.SaveChangesAsync() >= 1;
+                    return result;
                 }
                 catch
                 {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AspWebApp.Data
 {
-    internal sealed class User
+    public sealed class User
     {
         [Key]
         public int Id { get; set; }

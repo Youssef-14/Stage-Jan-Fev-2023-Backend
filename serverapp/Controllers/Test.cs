@@ -83,6 +83,23 @@ namespace serverapp.Controllers
             memoryStream.Seek(0, SeekOrigin.Begin);
             return File(memoryStream, "application/zip", $"{dossier}.zip");
         }
+        [HttpGet]
+        [Route("getallfiles/{dossier}")]
+        public IActionResult GetAllFiles(string dossier)
+        {
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier);
+            if (Directory.Exists(folderPath))
+            {
+                var files = Directory.GetFiles(folderPath);
+                var fileNames = files.Select(Path.GetFileName).ToArray();
+                return Ok(fileNames);
+            }
+            else
+            {
+                return NotFound("Directory not found");
+            }
+        }
+
         [HttpDelete]
         [Route("delete/{dossier}/{filename}")]
         public IActionResult DeleteFile(string dossier, string filename)

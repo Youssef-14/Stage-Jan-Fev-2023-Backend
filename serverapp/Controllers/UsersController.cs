@@ -1,39 +1,103 @@
-﻿/*using Microsoft.AspNetCore.Mvc;
+﻿using AspWebApp.Data;
+using Microsoft.AspNetCore.Mvc;
+using serverapp.Services;
+using System.Collections;
 
 [ApiController]
-public class ValuesController : ControllerBase
+[Route("api/[controller]")]
+public class UserController : ControllerBase
 {
-    // GET api/values
-    [HttpGet]
-    public ActionResult<IEnumerable<string>> Get()
+    [HttpGet("get-all-users")]
+    public async Task<IActionResult> Get()
     {
-        return new string[] { "value1", "value2" };
+        var users = await UsersRepository.GetUsersAsync();
+        return Ok(users);
     }
-
-    // GET api/values/5
-    [HttpGet("{id}")]
-    public ActionResult<string> Get(int id)
+    [HttpGet("get-user-by-id/{Id}")]
+    public async Task<IActionResult> Get(int Id)
     {
-        return "value";
+        var users = await UsersRepository.GetUserByIdAsync(Id);
+        if (users == null)
+            return NotFound("File not found");
+        return Ok(users);
     }
-
-    // POST api/values
-    [HttpPost]
-    public void Post([FromBody] string value)
-    {
-    }
-
-    // PUT api/values/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    [HttpGet("get-user-by-email-and-password/{email}/{password}")]
+    public async Task<IActionResult> Get(string email, string password)
     {
         
+        var users = await UsersRepository.GetUserByEmailAndPasswordAsync(email, password);
+        if (users == null)
+            return NotFound("File not found");
+        return Ok(users);
     }
-
-    // DELETE api/values/5
-    [HttpDelete("{id}")]
-    public void Delete(int id)
+    [HttpPost("create-user")]
+    public async Task<IActionResult> CreateUser([FromBody] User userToCreate)
     {
+        bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
+
+        if (createSuccessful)
+        {
+            return Ok("Create successful.");
+        }
+        else
+        {
+            return BadRequest("not created there is a probleme");
+        }
+    }
+    [HttpPost("create-admin")]
+    public async Task<IActionResult> CreateAdmin([FromBody] User userToCreate)
+    {
+        bool createSuccessful = await UsersRepository.CreateAdminAsync(userToCreate);
+
+        if (createSuccessful)
+        {
+            return Ok("Create successful.");
+        }
+        else
+        {
+            return BadRequest("not created there is a probleme");
+        }
+    }
+    [HttpPut("update-admin")]
+    public async Task<IActionResult> UpdateAdmin([FromBody] User employeToUpdate)
+    {
+        bool updateSuccessful = await UsersRepository.UpdateAdminAsync(employeToUpdate);
+
+        if (updateSuccessful)
+        {
+            return Ok("Update successful.");
+        }
+        else
+        {
+            return BadRequest("not updated there is a probleme");
+        }
+    }
+    [HttpPut("update-user")]
+    public async Task<IActionResult> UpdateUser([FromBody] User employeToUpdate)
+    {
+        bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
+
+        if (updateSuccessful)
+        {
+            return Ok("Update successful.");
+        }
+        else
+        {
+            return BadRequest("not updated there is a probleme");
+        }
+    }
+    [HttpDelete("delete-user/{Id}")]
+    public async Task<IActionResult> UpdateUser(int Id)
+    {
+        bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
+
+        if (deleteSuccessful)
+        {
+            return Ok("Delete successful.");
+        }
+        else
+        {
+            return BadRequest("not deleted there is a probleme");
+        }
     }
 }
-*/

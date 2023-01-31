@@ -20,7 +20,7 @@ namespace serverapp.Services
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
                 if (user == null)
                 {
-                    return new User();
+                    return null;
                 }
                 return user;
             }   
@@ -32,7 +32,7 @@ namespace serverapp.Services
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
                 if (user == null)
                 {
-                    return new User();
+                    return null;
                 }
                 return user;
             }
@@ -44,7 +44,7 @@ namespace serverapp.Services
                 var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
                 if (user == null)
                 {
-                    return new User();
+                    return null;
                 }
                 return user;
             }

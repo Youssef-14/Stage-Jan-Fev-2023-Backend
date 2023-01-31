@@ -7,7 +7,6 @@ using serverapp.Security;
 using serverapp.Services;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using TestApiJWT.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,125 +75,6 @@ app.UseHttpsRedirection();
 
 app.UseCors("CORSPolicy");
 
-
-// User Controller 
-// User Controller 
-/*
-getDataLength = () => {
-axios
-    .get("https://localhost:7095/get-demandes-filtered-number/" + this.state.filter_type + "/" + this.state.filter_status)
-    .then(response => {
-        this.state.data_length = response.data;
-        console.log(this.state.data_length);
-        this.fetchData();
-    })
-    .catch (error => {
-    console.error(error);
-});
-}*/
-
-app.MapGet("/get-all-users", async () => await UsersRepository.GetUsersAsync())
-    .WithTags("Users Endpoints");
-
-app.MapGet("/get-user-by-id/{Id}", async (int Id) =>
-{
-    User userToReturn = await UsersRepository.GetUserByIdAsync(Id);
-
-    if (userToReturn != null)
-    {
-        return Results.Ok(userToReturn);
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapGet("/get-user-by-email-and-password/{email}/{password}", async (string email, string password) =>
-{
-    User userToReturn = await UsersRepository.GetUserByEmailAndPasswordAsync(email, password);
-
-    if (userToReturn != null)
-    {
-        return Results.Ok(userToReturn);
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-
-app.MapPost("/create-user", async (User userToCreate) =>
-{
-    bool createSuccessful = await UsersRepository.CreateUserAsync(userToCreate);
-
-    if (createSuccessful)
-    {
-        return Results.Ok("Create successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapPost("/create-admin", async (User userToCreate) =>
-{
-    bool createSuccessful = await UsersRepository.CreateAdminAsync(userToCreate);
-
-    if (createSuccessful)
-    {
-        return Results.Ok("Create successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapPut("/update-user", async (User employeToUpdate) =>
-{
-    bool updateSuccessful = await UsersRepository.UpdateUserAsync(employeToUpdate);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapPut("/update-admin", async (User employeToUpdate) =>
-{
-    bool updateSuccessful = await UsersRepository.UpdateAdminAsync(employeToUpdate);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
-app.MapDelete("/delete-user-by-id/{Id}", async (int Id) =>
-{
-    bool deleteSuccessful = await UsersRepository.DeleteUserAsync(Id);
-
-    if (deleteSuccessful)
-    {
-        return Results.Ok("Delete successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Users Endpoints");
-
 //Department Controller
 //Department Controller
 
@@ -227,7 +107,7 @@ app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
     }
     else
     {
-        return Results.BadRequest();
+        return Results.NotFound("File not found");
     }
 }).WithTags("Demands Endpoints");
 

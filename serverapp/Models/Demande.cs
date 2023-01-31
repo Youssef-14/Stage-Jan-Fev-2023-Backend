@@ -11,7 +11,7 @@ namespace serverapp.Data
         public static string EnCours = "encours";
         public static string Acorriger = "àcorriger";
     }
-    internal sealed class Demande
+    public sealed class Demande
     {
         [Key]
         public int Id { get; set; }

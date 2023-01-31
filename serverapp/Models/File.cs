@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace serverapp.Data
 {
-    internal sealed class File
+    public sealed class File
     {
         [Key]
         public int Id { get; set; }
