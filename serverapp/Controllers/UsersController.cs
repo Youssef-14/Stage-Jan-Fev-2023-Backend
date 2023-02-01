@@ -4,19 +4,24 @@ using serverapp.Services;
 using System.Collections;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class UserController : ControllerBase
 {
+    private readonly UserService UserService;
+    public UserController(UserService UserService)
+    {
+        this.UserService = UserService;
+    }
     [HttpGet("get-all-users")]
     public async Task<IActionResult> Get()
     {
-        var users = await UsersService.GetUsersAsync();
+        var users = await UserService.GetUsersAsync();
         return Ok(users);
     }
     [HttpGet("get-user-by-id/{Id}")]
     public async Task<IActionResult> Get(int Id)
     {
-        var users = await UsersService.GetUserByIdAsync(Id);
+        var users = await UserService.GetUserByIdAsync(Id);
         if (users == null)
             return NotFound("File not found");
         return Ok(users);
@@ -25,7 +30,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Get(string email, string password)
     {
         
-        var users = await UsersService.GetUserByEmailAndPasswordAsync(email, password);
+        var users = await UserService.GetUserByEmailAndPasswordAsync(email, password);
         if (users == null)
             return NotFound("File not found");
         return Ok(users);
@@ -33,7 +38,7 @@ public class UserController : ControllerBase
     [HttpPost("create-user")]
     public async Task<IActionResult> CreateUser([FromBody] User userToCreate)
     {
-        bool createSuccessful = await UsersService.CreateUserAsync(userToCreate);
+        bool createSuccessful = await UserService.CreateUserAsync(userToCreate);
 
         if (createSuccessful)
         {
@@ -47,7 +52,7 @@ public class UserController : ControllerBase
     [HttpPost("create-admin")]
     public async Task<IActionResult> CreateAdmin([FromBody] User userToCreate)
     {
-        bool createSuccessful = await UsersService.CreateAdminAsync(userToCreate);
+        bool createSuccessful = await UserService.CreateAdminAsync(userToCreate);
 
         if (createSuccessful)
         {
@@ -61,7 +66,7 @@ public class UserController : ControllerBase
     [HttpPut("update-admin")]
     public async Task<IActionResult> UpdateAdmin([FromBody] User employeToUpdate)
     {
-        bool updateSuccessful = await UsersService.UpdateAdminAsync(employeToUpdate);
+        bool updateSuccessful = await UserService.UpdateAdminAsync(employeToUpdate);
 
         if (updateSuccessful)
         {
@@ -75,7 +80,7 @@ public class UserController : ControllerBase
     [HttpPut("update-user")]
     public async Task<IActionResult> UpdateUser([FromBody] User employeToUpdate)
     {
-        bool updateSuccessful = await UsersService.UpdateUserAsync(employeToUpdate);
+        bool updateSuccessful = await UserService.UpdateUserAsync(employeToUpdate);
 
         if (updateSuccessful)
         {
@@ -89,7 +94,7 @@ public class UserController : ControllerBase
     [HttpDelete("delete-user/{Id}")]
     public async Task<IActionResult> UpdateUser(int Id)
     {
-        bool deleteSuccessful = await UsersService.DeleteUserAsync(Id);
+        bool deleteSuccessful = await UserService.DeleteUserAsync(Id);
 
         if (deleteSuccessful)
         {

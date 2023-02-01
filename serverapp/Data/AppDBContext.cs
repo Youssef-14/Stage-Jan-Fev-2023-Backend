@@ -4,7 +4,7 @@ using serverapp.Data;
 
 namespace AspWebApp.Data
 {
-    internal sealed class AppDBContext : DbContext
+    public sealed class AppDBContext : DbContext
     {
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }

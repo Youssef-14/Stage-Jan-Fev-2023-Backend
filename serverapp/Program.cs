@@ -77,6 +77,7 @@ app.UseCors("CORSPolicy");
 
 //Department Controller
 //Department Controller
+DemandeService DemandeService = new DemandeService(new AppDBContext());
 
 app.MapGet("/get-all-demandes", async () => await DemandeService.GetDemandesAsync())
     .WithTags("Demands Endpoints");
