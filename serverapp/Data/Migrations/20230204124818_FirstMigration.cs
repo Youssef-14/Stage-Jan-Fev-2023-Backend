@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace serverapp.Migrations
+namespace serverapp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class firstMigration : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +15,14 @@ namespace serverapp.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Email = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Cin = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Cin = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Token = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,13 +34,13 @@ namespace serverapp.Migrations
                 name: "Demandes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Date = table.Column<DateTime>(type: "TEXT", maxLength: 50, nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Status = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Comment = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", maxLength: 50, nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -57,13 +58,13 @@ namespace serverapp.Migrations
                 name: "Files",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Path = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    Size = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    DemandeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Size = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DemandeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -6,7 +6,6 @@ using serverapp.Data;
 using serverapp.Security;
 using serverapp.Services;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,13 +32,7 @@ builder.Services.AddSwaggerGen(swaggerGenOptions =>
     swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NET", Version = "v1" });
 });
 
-var app = builder.Build();
-
-//builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-
-
-
-/*builder.Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -51,14 +44,18 @@ var app = builder.Build();
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = true,
-                        ValidIssuer = builder.Configuration["JWT:Issuer"],
-                        ValidAudience = builder.Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("veryverysecret......."))
                     };
-                });*/
+                });
+
+var app = builder.Build();
+
+
+
+
 
 
 app.MapControllers();
@@ -140,9 +137,9 @@ app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
     }
 }).WithTags("Demands Endpoints");
 
-app.MapPut("/set-demande-to-accepted", async (Demande demandeToUpdate) =>
+app.MapPut("/set-demande-to-accepted/{id}", async (int id) =>
 {
-    bool updateSuccessful = await DemandeService.SetDemandeToAcceptedAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToAcceptedAsync(id);
 
     if (updateSuccessful)
     {
@@ -154,9 +151,9 @@ app.MapPut("/set-demande-to-accepted", async (Demande demandeToUpdate) =>
     }
 }).WithTags("Demands Endpoints");
 
-app.MapPut("/set-demande-to-refused", async (Demande demandeToUpdate) =>
+app.MapPut("/set-demande-to-refused/{id}", async (int id) =>
 {
-    bool updateSuccessful = await DemandeService.SetDemandeToRefusedAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToRefusedAsync(id);
 
     if (updateSuccessful)
     {
@@ -168,9 +165,9 @@ app.MapPut("/set-demande-to-refused", async (Demande demandeToUpdate) =>
     }
 }).WithTags("Demands Endpoints");
 
-app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
+app.MapPut("/set-demande-to-pending/{id}", async (int id) =>
 {
-    bool updateSuccessful = await DemandeService.SetDemandeToPendingAsync(demandeToUpdate);
+    bool updateSuccessful = await DemandeService.SetDemandeToPendingAsync(id);
 
     if (updateSuccessful)
     {
@@ -182,9 +179,9 @@ app.MapPut("/set-demande-to-pending", async (Demande demandeToUpdate) =>
     }
 }).WithTags("Demands Endpoints");
 
-    app.MapPut("/set-demande-to-be-corrected", async (Demande demandeToUpdate) =>
+    app.MapPut("/set-demande-to-be-corrected/{id}", async (int id) =>
     {
-        bool updateSuccessful = await DemandeService.SetDemandeToBeCorrectedAsync(demandeToUpdate);
+        bool updateSuccessful = await DemandeService.SetDemandeToBeCorrectedAsync(id);
 
         if (updateSuccessful)
         {

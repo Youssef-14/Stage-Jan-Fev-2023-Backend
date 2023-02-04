@@ -6,12 +6,14 @@ namespace AspWebApp.Data
 {
     public sealed class AppDBContext : DbContext
     {
+        
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<serverapp.Data.File> Files { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite ("Data Source=./Data/AppDB.db");
+            //optionsBuilder.UseSqlite("Data Source=./Data/AppDB.db");
+            optionsBuilder.UseSqlServer("Data Source=(localdb)\\Stage;Initial Catalog=stageapp;Integrated Security=True;MultipleActiveResultSets=True");
         }
         [Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)

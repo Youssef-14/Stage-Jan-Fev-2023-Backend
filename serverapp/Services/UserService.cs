@@ -6,11 +6,12 @@ namespace serverapp.Services
 {
     public class UserService
     {
-        private  readonly AppDBContext db;
+        private readonly AppDBContext db;
         public UserService(AppDBContext db)
         {
             this.db = db;
         }
+
         internal async Task<IEnumerable<User>> GetUsersAsync()
         {
             return await db.Users.ToListAsync();
@@ -33,9 +34,9 @@ namespace serverapp.Services
             }
             return user;
         }
-        internal async Task<User> GetUserByEmailAndPasswordAsync(string email,string password)
+        internal Task<User> GetUserByEmailAndPasswordAsync(string email,string password)
         {
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email && PasswordHasher.HashPassword(password) == u.Password);
+            var user =  db.Users.FirstOrDefaultAsync(u => u.Email == email && PasswordHasher.HashPassword(password) == u.Password);
             if (user == null)
             {
                 return null;
@@ -43,34 +44,59 @@ namespace serverapp.Services
             return user;
 
         }
-        public async Task<bool> CreateUserAsync(User user)
+        //
+        public async Task<string> CreateUserAsync(User user)
         {
-            user.Type = "user";
-            user.Password = PasswordHasher.HashPassword(user.Password);
             try
             {
+                if (await CheckUserEmailExistAsync(user.Email))
+                {
+                    return "Email already in use";
+                }
+                if (await CheckUserCinExistAsync(user.Cin))
+                {
+                    return "Cin already in use";
+                }
+                user.Type = "user";
+                user.Password = PasswordHasher.HashPassword(user.Password);
                 await db.Users.AddAsync(user);
-                return await db.SaveChangesAsync() >= 1;
+                await db.SaveChangesAsync();
+                return "Created successfully";
             }
             catch
             {
-                return false;
+                return "Failed to create";
             }
         }
-        internal async Task<bool> CreateAdminAsync(User user)
+        //
+        public async Task<string> CreateAdminAsync(User user)
         {
-            user.Type = "admin";
-            if (await CheckUserEmailExistAsync(user.Email))
+            try
             {
-                return false;
+                if (await CheckUserEmailExistAsync(user.Email))
+                {
+                    return "Email already in use" ;
+                }
+                if (await CheckUserCinExistAsync(user.Email))
+                {
+                    return "Cin already in use";
+                }
+                user.Type = "admin";
+                user.Password = PasswordHasher.HashPassword(user.Password);
+                await db.Users.AddAsync(user);
+                await db.SaveChangesAsync();
+                return "Admin created successfully";
             }
-            await db.Users.AddAsync(user);
-            return await db.SaveChangesAsync() >= 1;
-
+            catch
+            {
+                return "Failed to create admin";
+            }
         }
+
         internal async Task<bool> UpdateUserAsync(User user)
         {
             user.Type = "user";
+            user.Password = PasswordHasher.HashPassword(user.Password);
             try
             {
                 db.Users.Update(user);
@@ -84,6 +110,7 @@ namespace serverapp.Services
         internal async Task<bool> UpdateAdminAsync(User user)
         {
             user.Type = "admin";
+            user.Password = PasswordHasher.HashPassword(user.Password);
             try
             {
                 db.Users.Update(user);

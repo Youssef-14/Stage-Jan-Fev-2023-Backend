@@ -100,12 +100,15 @@ namespace serverapp.Services
                 return false;
             }
         }
-        internal async Task<bool> SetDemandeToAcceptedAsync(Demande demande)
+        internal async Task<bool> SetDemandeToAcceptedAsync(int id)
         {
             try
             {
-                demande.Status = "accepté";
-                db.Demandes.Update(demande);
+                var requests = db.Demandes.Where(r => r.Id == id);
+                foreach (var request in requests)
+                {
+                    request.Status = "accepté";
+                }
                 return await db.SaveChangesAsync() >= 1;
             }
             catch
@@ -113,39 +116,15 @@ namespace serverapp.Services
                 return false;
             }
         }
-        internal async Task<bool> SetDemandeToRefusedAsync(Demande demande)
+        internal async Task<bool> SetDemandeToRefusedAsync(int id)
         {
             try
             {
-                demande.Status = "refusé";
-                db.Demandes.Update(demande);
-                return await db.SaveChangesAsync() >= 1;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        internal async Task<bool> SetDemandeToPendingAsync(Demande demande)
-        {
-            try
-            {
-                demande.Status = "encours";
-                db.Demandes.Update(demande);
-                return await db.SaveChangesAsync() >= 1;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        internal async Task<bool> SetDemandeToBeCorrectedAsync(Demande demande)
-        {
-            try
-            {
-                demande.Status = "àcorriger";
-                db.Demandes.Update(demande);
+                var requests = db.Demandes.Where(r => r.Id == id);
+                foreach (var request in requests)
+                {
+                    request.Status = "refusé";
+                }
                 return await db.SaveChangesAsync() >= 1;
             }
             catch
@@ -154,6 +133,38 @@ namespace serverapp.Services
             }
         }
 
+        internal async Task<bool> SetDemandeToPendingAsync(int id)
+        {
+            try
+            {
+                var requests = db.Demandes.Where(r => r.Id == id);
+                foreach (var request in requests)
+                {
+                    request.Status = "encours";
+                }
+                return await db.SaveChangesAsync() >= 1;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        internal async Task<bool> SetDemandeToBeCorrectedAsync(int id)
+        {
+            try
+            {
+                var requests = db.Demandes.Where(r => r.Id == id);
+                foreach (var request in requests)
+                {
+                    request.Status = "àcorriger";
+                }
+                return await db.SaveChangesAsync() >= 1;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         internal async Task<bool> DeleteDemandeAsync(int id)
         {
             try

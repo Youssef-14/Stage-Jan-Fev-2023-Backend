@@ -19,9 +19,11 @@ namespace AspWebApp.Data
         [MaxLength(50)]
         public string Name { get; set; } = string.Empty;
         [MaxLength(50)]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
+        [MaxLength(70)]
+        public string Token { get; set; } = string.Empty;
         [Required]
-        [MaxLength(50)] 
+        [MaxLength(70)]
         public string Password { get; set; } = string.Empty;
         [InverseProperty("User")]
         public ICollection<Demande> demandes  { get; set; }
