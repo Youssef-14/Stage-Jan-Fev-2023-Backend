@@ -76,44 +76,12 @@ app.UseCors("CORSPolicy");
 //Department Controller
 DemandeService DemandeService = new DemandeService(new AppDBContext());
 
-app.MapGet("/get-all-demandes", async () => await DemandeService.GetDemandesAsync())
-    .WithTags("Demands Endpoints");
-app.MapGet("/get-demandes-filtered-number/{type}/{status}", async (string type, string status) => await DemandeService.GetDemandesFilteredNumber(type, status))
-    .WithTags("Demands Endpoints");
-app.MapGet("/get-all-demandes-by-user/{Id}", async (int Id) => await DemandeService.GetDemandsByUserIdAsync(Id))
-    .WithTags("Demands Endpoints");
-
-app.MapGet("/get-all-accepted-demands", async () => await DemandeService.GetAcceptedDemandesAsync())
-    .WithTags("Demands Endpoints");
-
-app.MapGet("/get-all-rejected-demands", async () => await DemandeService.GetRefusedDemandesAsync())
-    .WithTags("Demands Endpoints");
-app.MapGet("/get-all-pending-demands", async () => await DemandeService.GetPendingDemandesAsync())
-    .WithTags("Demands Endpoints");
-
-app.MapGet("/get-filtered-demands/{type}/{status}/{begin}/{end}", async (string type, string status, int begin, int end) =>
-     await DemandeService.GetFilteredDemandesAsync(type, status, begin, end))
-    .WithTags("Demands Endpoints");
-
-app.MapGet("/get-demande-by-id/{Id}", async (int Id) =>
-{
-    Demande demandeToReturn = await DemandeService.GetDemandeByIdAsync(Id);
-
-    if (demandeToReturn != null)
-    {
-        return Results.Ok(demandeToReturn);
-    }
-    else
-    {
-        return Results.NotFound("File not found");
-    }
-}).WithTags("Demands Endpoints");
 
 app.MapPost("/create-demande", async (Demande demandeToCreate) =>
 {
-    bool createSuccessful = await DemandeService.CreateDemandeAsync(demandeToCreate);
+    string createSuccessful = await DemandeService.CreateDemandeAsync(demandeToCreate);
 
-    if (createSuccessful)
+    if (createSuccessful== "demandecréeé")
     {
         return Results.Ok("Create successful.");
     }
@@ -122,7 +90,6 @@ app.MapPost("/create-demande", async (Demande demandeToCreate) =>
         return Results.BadRequest();
     }
 }).WithTags("Demands Endpoints");
-
 app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
 {
     bool updateSuccessful = await DemandeService.UpdateDemandeAsync(demandeToUpdate);
@@ -130,77 +97,6 @@ app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
     if (updateSuccessful)
     {
         return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-
-app.MapPut("/set-demande-to-accepted/{id}", async (int id) =>
-{
-    bool updateSuccessful = await DemandeService.SetDemandeToAcceptedAsync(id);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-
-app.MapPut("/set-demande-to-refused/{id}", async (int id) =>
-{
-    bool updateSuccessful = await DemandeService.SetDemandeToRefusedAsync(id);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-
-app.MapPut("/set-demande-to-pending/{id}", async (int id) =>
-{
-    bool updateSuccessful = await DemandeService.SetDemandeToPendingAsync(id);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-
-    app.MapPut("/set-demande-to-be-corrected/{id}", async (int id) =>
-    {
-        bool updateSuccessful = await DemandeService.SetDemandeToBeCorrectedAsync(id);
-
-        if (updateSuccessful)
-        {
-            return Results.Ok("Update successful.");
-        }
-        else
-        {
-            return Results.BadRequest();
-        }
-    }).WithTags("Demands Endpoints");
-
-
-app.MapDelete("/delete-demande-by-id/{Id}", async (int Id) =>
-{
-    bool deleteSuccessful = await DemandeService.DeleteDemandeAsync(Id);
-
-    if (deleteSuccessful)
-    {
-        return Results.Ok("Delete successful.");
     }
     else
     {

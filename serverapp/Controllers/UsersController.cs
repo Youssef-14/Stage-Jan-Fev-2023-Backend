@@ -1,9 +1,9 @@
 ﻿using AspWebApp.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using serverapp.Services;
 using System.Collections;
-
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,6 +17,7 @@ public class UserController : ControllerBase
     {
         this.UserService = new UserService(new AppDBContext());
     }
+    [Authorize(Roles = "admin")]
     [HttpGet("get-all-users")]
     public async Task<IActionResult> Get()
     {
@@ -56,18 +57,25 @@ public class UserController : ControllerBase
         ////to be co
         return Ok( await UserService.CreateAdminAsync(userToCreate));
     }
-    [HttpPut("update-admin")]
-    public async Task<IActionResult> UpdateAdmin([FromBody] User employeToUpdate)
+    [Authorize(Roles ="Admin")]
+    [HttpPut("update-password")]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordModel pass)
     {
         //to be co
-        return Ok( await UserService.UpdateAdminAsync(employeToUpdate));
+        if (await UserService.UpdatePasswordAsync(pass))
+        {
+            return Ok("Update successful.");
+        }
+        else
+        {
+            return BadRequest("not updated there is a probleme");
+        }
     }
+    [Authorize]
     [HttpPut("update-user")]
     public async Task<IActionResult> UpdateUser([FromBody] User employeToUpdate)
     {
-        bool updateSuccessful = await UserService.UpdateUserAsync(employeToUpdate);
-
-        if (updateSuccessful)
+        if (await UserService.UpdateUserAsync(employeToUpdate))
         {
             return Ok("Update successful.");
         }
@@ -97,8 +105,8 @@ public class UserController : ControllerBase
         var key = Encoding.UTF8.GetBytes("veryverysecret.......");
         var identity = new ClaimsIdentity(new Claim[]
         {
-            new Claim(ClaimTypes.Role, user.Type),
-            new Claim(ClaimTypes.Name, user.Name),
+            new Claim("id", user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Type)
         });
         var credentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256);
 

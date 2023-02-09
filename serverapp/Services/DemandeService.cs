@@ -42,9 +42,16 @@ namespace serverapp.Services
 
         }
         //Filter
-        internal async Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end)
+        internal async Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end, string tri)
         {
-            return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).Skip(begin).Take(end).ToListAsync();
+            if(tri == "récente")
+            {
+                return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).OrderByDescending(d => d.Date).Skip(begin).Take(end).ToListAsync();
+            }
+            else
+            {
+                return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).OrderBy(d => d.Date).Skip(begin).Take(end).ToListAsync();
+            }
         }
         //method that returns accepted demands
         internal async Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
@@ -74,18 +81,18 @@ namespace serverapp.Services
             return await db.Demandes.FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        internal async Task<bool> CreateDemandeAsync(Demande demande)
+        internal async Task<string> CreateDemandeAsync(Demande demande)
         {
             try
             {
                 demande.Status = StatusDemande.EnCours;
                 await db.Demandes.AddAsync(demande);
-                var result = await db.SaveChangesAsync() >= 1;
-                return result;
+                await db.SaveChangesAsync();
+                return "demandecréeé";
             }
             catch
             {
-                return false;
+                return "pas crée ";
             }
         }
         internal async Task<bool> UpdateDemandeAsync(Demande demande)

@@ -1,4 +1,5 @@
 ﻿using AspWebApp.Data;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -29,20 +30,15 @@ namespace serverapp.Services
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
-            {
                 return null;
-            }
             return user;
         }
         internal Task<User> GetUserByEmailAndPasswordAsync(string email,string password)
         {
             var user =  db.Users.FirstOrDefaultAsync(u => u.Email == email && PasswordHasher.HashPassword(password) == u.Password);
             if (user == null)
-            {
                 return null;
-            }
             return user;
-
         }
         //
         public async Task<string> CreateUserAsync(User user)
@@ -50,13 +46,9 @@ namespace serverapp.Services
             try
             {
                 if (await CheckUserEmailExistAsync(user.Email))
-                {
                     return "Email already in use";
-                }
                 if (await CheckUserCinExistAsync(user.Cin))
-                {
                     return "Cin already in use";
-                }
                 user.Type = "user";
                 user.Password = PasswordHasher.HashPassword(user.Password);
                 await db.Users.AddAsync(user);
@@ -74,13 +66,9 @@ namespace serverapp.Services
             try
             {
                 if (await CheckUserEmailExistAsync(user.Email))
-                {
-                    return "Email already in use" ;
-                }
+                    return "Email already in use";
                 if (await CheckUserCinExistAsync(user.Email))
-                {
                     return "Cin already in use";
-                }
                 user.Type = "admin";
                 user.Password = PasswordHasher.HashPassword(user.Password);
                 await db.Users.AddAsync(user);
@@ -92,14 +80,19 @@ namespace serverapp.Services
                 return "Failed to create admin";
             }
         }
-
-        internal async Task<bool> UpdateUserAsync(User user)
+        internal async Task<bool> UpdatePasswordAsync(UpdatePasswordModel pass)
         {
-            user.Type = "user";
-            user.Password = PasswordHasher.HashPassword(user.Password);
+            //To be
             try
             {
-                db.Users.Update(user);
+                var requests = db.Users.Where(r => r.Id == pass.Id);
+                //Check fo previous password
+                
+                foreach(var request in requests)
+                    if (request.Password != PasswordHasher.HashPassword(pass.OldPassword))
+                        return false;
+                foreach (var request in requests)
+                    request.Password = PasswordHasher.HashPassword(pass.NewPassword);
                 return await db.SaveChangesAsync() >= 1;
             }
             catch
@@ -107,13 +100,17 @@ namespace serverapp.Services
                 return false;
             }
         }
-        internal async Task<bool> UpdateAdminAsync(User user)
+        internal async Task<bool> UpdateUserAsync(User user)
         {
-            user.Type = "admin";
-            user.Password = PasswordHasher.HashPassword(user.Password);
             try
             {
-                db.Users.Update(user);
+                var requests = db.Users.Where(r => r.Id == user.Id);
+                foreach (var request in requests)
+                {
+                    request.Name = user.Name;
+                    request.Email = user.Email;
+                    //request.Cin = user.Cin;
+                }
                 return await db.SaveChangesAsync() >= 1;
             }
             catch

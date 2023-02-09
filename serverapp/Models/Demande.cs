@@ -17,7 +17,6 @@ namespace serverapp.Data
         public int Id { get; set; }
         [MaxLength(50)]
         public string type { get; set; }
-        [Required]
         [MaxLength(50)]
         public DateTime Date { get; set; }
         [InverseProperty("demandes")]
