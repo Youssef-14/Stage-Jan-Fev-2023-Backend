@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AspWebApp.Data
+namespace serverapp
 {
     public class UpdatePasswordModel
     {

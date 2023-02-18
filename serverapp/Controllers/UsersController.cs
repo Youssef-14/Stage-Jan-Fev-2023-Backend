@@ -1,13 +1,8 @@
-﻿using AspWebApp.Data;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using serverapp;
 using serverapp.Helpers;
 using serverapp.Services;
-using System.Collections;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 [ApiController]
 [Route("[controller]")]
@@ -18,8 +13,7 @@ public class UserController : ControllerBase
     {
         this.UserService = new UserService(new AppDBContext());
     }
-    [Authorize]
-    [Authorize(Roles = "admin")]
+
     [HttpGet("get-all-users")]
     public async Task<IActionResult> Get()
     {

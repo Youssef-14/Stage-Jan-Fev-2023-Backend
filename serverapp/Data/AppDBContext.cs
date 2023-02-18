@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using serverapp.Data;
 using MongoDB.Driver;
 
-namespace AspWebApp.Data
+namespace serverapp
 {
     public class AppDBContext : DbContext
     {

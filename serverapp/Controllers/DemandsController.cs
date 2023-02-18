@@ -1,7 +1,5 @@
-﻿using AspWebApp.Data;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using serverapp.Data;
 using serverapp.Services;
 
 namespace serverapp.Controllers
