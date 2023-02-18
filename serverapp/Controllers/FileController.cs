@@ -5,7 +5,7 @@ using System.IO.Compression;
 namespace serverapp.Controllers
 {
     [ApiController]
-    public class Test : ControllerBase
+    public class FileController : ControllerBase
     {
         [HttpPost]
         [Route("upload/{dossier}")]

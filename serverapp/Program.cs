@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using serverapp.Data;
-using serverapp.Security;
 using serverapp.Services;
 using System.Text;
 
@@ -24,7 +23,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(swaggerGenOptions =>

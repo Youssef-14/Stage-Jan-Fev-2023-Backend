@@ -1,5 +1,4 @@
 ﻿using AspWebApp.Data;
-using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -13,7 +12,7 @@ namespace serverapp.Services
             this.db = db;
         }
 
-        internal async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<User>> GetUsersAsync()
         {
             return await db.Users.ToListAsync();
         }

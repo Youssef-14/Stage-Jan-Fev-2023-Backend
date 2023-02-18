@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using serverapp.Helpers;
 using serverapp.Services;
 using System.Collections;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,6 +18,7 @@ public class UserController : ControllerBase
     {
         this.UserService = new UserService(new AppDBContext());
     }
+    [Authorize]
     [Authorize(Roles = "admin")]
     [HttpGet("get-all-users")]
     public async Task<IActionResult> Get()
@@ -24,6 +26,7 @@ public class UserController : ControllerBase
         var users = await UserService.GetUsersAsync();
         return Ok(users);
     }
+    [Authorize]
     [HttpGet("get-user-by-id/{Id}")]
     public async Task<IActionResult> Get(int Id)
     {
@@ -39,7 +42,7 @@ public class UserController : ControllerBase
         
         if (user == null)
             return NotFound("User not found");
-        user.Token = CreateJwt(user);
+        user.Token = JWTTokenCreator.CreateJwt(user);
         return Ok(new {
             Token = user.Token,
             Message = "Login successful.",
@@ -57,7 +60,7 @@ public class UserController : ControllerBase
         ////to be co
         return Ok( await UserService.CreateAdminAsync(userToCreate));
     }
-    [Authorize(Roles ="Admin")]
+    [Authorize]
     [HttpPut("update-password")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordModel pass)
     {
@@ -84,6 +87,7 @@ public class UserController : ControllerBase
             return BadRequest("not updated there is a probleme");
         }
     }
+    [Authorize]
     [HttpDelete("delete-user/{Id}")]
     public async Task<IActionResult> DeleteUser(int Id)
     {
@@ -97,26 +101,5 @@ public class UserController : ControllerBase
         {
             return BadRequest("not deleted there is a probleme");
         }
-    }
-    //JWT
-    private string CreateJwt(User user)
-    {
-        var jwtTokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes("veryverysecret.......");
-        var identity = new ClaimsIdentity(new Claim[]
-        {
-            new Claim("id", user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Type)
-        });
-        var credentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = identity,
-            Expires = DateTime.Now.AddDays(1),
-            SigningCredentials = credentials
-        };
-        var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-        return jwtTokenHandler.WriteToken(token);
     }
 }

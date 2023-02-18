@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace serverapp.Services
 {
-    internal class DemandeService
+    public class DemandeService
     {
         private readonly AppDBContext db;
         public DemandeService(AppDBContext db)
@@ -35,7 +35,7 @@ namespace serverapp.Services
             return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).CountAsync();
         }
         //same as above but only for the demandes of a specific user
-        internal async Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
+        public async Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
         {
 
             return await db.Demandes.Where(d => d.UserId == userid).ToListAsync();

@@ -1,31 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using AspWebApp.Data;
+using Microsoft.EntityFrameworkCore;
 using serverapp.Data;
-using MongoDB.Driver;
 
-namespace AspWebApp.Data
+namespace serverapp
 {
-    public class AppDBContext : DbContext
+    public class DBContextMocked : DbContext
     {
-        public AppDBContext()
+        public DBContextMocked(DbContextOptions<DBContextMocked> options)
+            : base(options)
         {
-            
-        }
-        public AppDBContext(object options)
-        {
-            Options = options;
         }
 
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<serverapp.Data.File> Files { get; set; }
-        public object Options { get; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder.UseSqlite("Data Source=./Data/AppDB.db");
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\Stage;Initial Catalog=stageapp;Integrated Security=True;MultipleActiveResultSets=True");
-        }
         [Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
