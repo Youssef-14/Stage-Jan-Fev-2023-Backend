@@ -1,6 +1,4 @@
-﻿using AspWebApp.Data;
-using Microsoft.EntityFrameworkCore;
-using serverapp.Data;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace serverapp
 {
@@ -10,10 +8,10 @@ namespace serverapp
             : base(options)
         {
         }
-
+        
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<serverapp.Data.File> Files { get; set; }
+        public DbSet<File> Files { get; set; }
 
         [Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)

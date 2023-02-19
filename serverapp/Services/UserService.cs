@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-
-namespace serverapp.Services
+namespace serverapp
 {
     public class UserService
     {
@@ -31,9 +30,9 @@ namespace serverapp.Services
                 return null;
             return user;
         }
-        internal Task<User> GetUserByEmailAndPasswordAsync(string email,string password)
+        internal Task<User> GetUserByEmailAndPasswordAsync(AuthentificationModel auth)
         {
-            var user =  db.Users.FirstOrDefaultAsync(u => u.Email == email && PasswordHasher.HashPassword(password) == u.Password);
+            var user =  db.Users.FirstOrDefaultAsync(u => u.Email == auth.Email && PasswordHasher.HashPassword(auth.Password) == u.Password);
             if (user == null)
                 return null;
             return user;

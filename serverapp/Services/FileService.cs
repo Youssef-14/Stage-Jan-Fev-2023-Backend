@@ -1,28 +1,25 @@
-﻿using AspWebApp.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using serverapp.Data;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace serverapp.Services
+namespace serverapp
 {
     public static class FileService
     {
-        internal async static Task<IEnumerable<Data.File>> GetFilesAsync()
+        internal async static Task<IEnumerable<File>> GetFilesAsync()
         {
             using var db = new AppDBContext();
-            return await db.Files.ToListAsync();
+            return (IEnumerable<File>)await db.Files.ToListAsync();
         }
-        internal async static Task<IEnumerable<Data.File>> GetFilesByDemandIdAsync(int demandId)
+        internal async static Task<IEnumerable<File>> GetFilesByDemandIdAsync(int demandId)
         {
             using var db = new AppDBContext();
             return await db.Files.Where(d => d.DemandeId == demandId).ToListAsync();
         }
-        internal async static Task<Data.File> GetFileByIdAsync(int id)
+        internal async static Task<File> GetFileByIdAsync(int id)
         {
             using var db = new AppDBContext();
             return await db.Files.FirstOrDefaultAsync(f => f.DemandeId == id);
         }
-        internal async static Task<bool> CreateFileAsync(Data.File file)
+        internal async static Task<bool> CreateFileAsync(File file)
         {
             using var db = new AppDBContext();
             try
@@ -35,7 +32,7 @@ namespace serverapp.Services
                 return false;
             }
         }
-        internal async static Task<bool> UpdateFileAsync(Data.File file)
+        internal async static Task<bool> UpdateFileAsync(File file)
         {
             using var db = new AppDBContext();
             try

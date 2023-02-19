@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-using serverapp.Data;
-using MongoDB.Driver;
 
 namespace serverapp
 {
@@ -11,15 +9,10 @@ namespace serverapp
         {
             
         }
-        public AppDBContext(object options)
-        {
-            Options = options;
-        }
 
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<serverapp.Data.File> Files { get; set; }
-        public object Options { get; }
+        public DbSet<File> Files { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

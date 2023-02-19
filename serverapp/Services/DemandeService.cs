@@ -1,9 +1,6 @@
-﻿using AspWebApp.Data;
-using Microsoft.EntityFrameworkCore;
-using serverapp.Data;
-using System.Collections.ObjectModel;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace serverapp.Services
+namespace serverapp
 {
     public class DemandeService
     {

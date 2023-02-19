@@ -1,8 +1,7 @@
-﻿using AspWebApp.Data;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace serverapp.Data
+namespace serverapp
 {
     public sealed class File
     {

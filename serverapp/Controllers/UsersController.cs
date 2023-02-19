@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using serverapp;
-using serverapp.Helpers;
-using serverapp.Services;
 
 [ApiController]
 [Route("[controller]")]
@@ -20,6 +18,7 @@ public class UserController : ControllerBase
         var users = await UserService.GetUsersAsync();
         return Ok(users);
     }
+
     [Authorize]
     [HttpGet("get-user-by-id/{Id}")]
     public async Task<IActionResult> Get(int Id)
@@ -29,10 +28,11 @@ public class UserController : ControllerBase
             return NotFound("User not found");
         return Ok(users);
     }
-    [HttpPost("authentificate/{email}/{password}")]
-    public async Task<IActionResult> Get(string email, string password)
+
+    [HttpPost("authentificate")]
+    public async Task<IActionResult> Get([FromBody] AuthentificationModel auth)
     {
-        var user = await UserService.GetUserByEmailAndPasswordAsync(email, password);
+        var user = await UserService.GetUserByEmailAndPasswordAsync(auth);
         
         if (user == null)
             return NotFound("User not found");
@@ -42,6 +42,7 @@ public class UserController : ControllerBase
             Message = "Login successful.",
         });
     }
+
     [HttpPost("create-user")]
     public async Task<IActionResult> CreateUser([FromBody] User userToCreate)
     {
