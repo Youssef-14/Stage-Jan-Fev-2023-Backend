@@ -1,98 +1,84 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using serverapp.Helpers;
 
 namespace serverapp
 {
-    public class DemandeService
+    public  class DemandeService
     {
-        private readonly AppDBContext db;
-        public DemandeService(AppDBContext db)
-        {
-            this.db = db;
-        }
+        private static readonly AppDBContext db = new AppDBContext();
         //method that returns all the demandes
-        internal async Task<IEnumerable<Demande>> GetDemandesAsync()
+        internal static async Task<IEnumerable<Demande>> GetDemandesAsync()
         {
             return await db.Demandes.ToListAsync();
         }
 
-        internal async Task<int> GetDemandesFilteredNumber(string type, string status)
+        internal static async Task<int> GetDemandesFilteredNumber(string type, string status)
         {
-            if (type == status)
-            {
-                return await db.Demandes.CountAsync();
-            }
-            if (type == "all")
-            {
-                return await db.Demandes.Where(d => d.Status == status).CountAsync();
-            }
-            if (status == "all")
-            {
-                return await db.Demandes.Where(t => t.type == type).CountAsync();
-            }
-            return await db.Demandes.Where(d => d.Status == status).Where(t => t.type == type).CountAsync();
+            return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).CountAsync();
         }
         //same as above but only for the demandes of a specific user
-        public async Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
+        public static async Task<IEnumerable<Demande>> GetDemandsByUserIdAsync(int userid)
         {
 
             return await db.Demandes.Where(d => d.UserId == userid).ToListAsync();
 
         }
         //Filter
-        internal async Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end, string tri)
+        internal static async Task<IEnumerable<Demande>> GetFilteredDemandesAsync(string type,string status,int begin,int end, string tri)
         {
             if(tri == "récente")
-            {
                 return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).OrderByDescending(d => d.Date).Skip(begin).Take(end).ToListAsync();
-            }
             else
-            {
                 return await db.Demandes.Where(d => (status == "all" || d.Status == status) && (type == "all" || d.type == type)).OrderBy(d => d.Date).Skip(begin).Take(end).ToListAsync();
-            }
         }
         //method that returns accepted demands
-        internal async Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
+        internal static async Task<IEnumerable<Demande>> GetAcceptedDemandesAsync()
         {
             return await db.Demandes.Where(d => d.Status == StatusDemande.Accepte).ToListAsync();
         }
         //method that returns refused demands
-        internal async Task<IEnumerable<Demande>> GetRefusedDemandesAsync()
+        internal static async Task<IEnumerable<Demande>> GetRefusedDemandesAsync()
         {
             return await db.Demandes.Where(e => e.Status == StatusDemande.Refusé).ToListAsync();
         }
         //method that returns demands in progress
-        internal async Task<IEnumerable<Demande>> GetPendingDemandesAsync()
+        internal static async Task<IEnumerable<Demande>> GetPendingDemandesAsync()
         {
             return await db.Demandes.Where(e => e.Status == StatusDemande.EnCours).ToListAsync();
         }
         //method that returns demands to be corrected
-        internal async Task<IEnumerable<Demande>> GetToBeCorrectedDemandesAsync()
+        internal static async Task<IEnumerable<Demande>> GetToBeCorrectedDemandesAsync()
         {
             return await db.Demandes.Where(e => e.Status == StatusDemande.Acorriger).ToListAsync();
 
         }
         //method that returns a demand by its id
-
-        internal async Task<Demande> GetDemandeByIdAsync(int id)
+        
+        public static async Task<Demande> GetDemandeByIdAsync(int id)
         {
             return await db.Demandes.FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        internal async Task<string> CreateDemandeAsync(Demande demande)
+        internal static async Task<int> CreateDemandeAsync(Demande demande)
         {
             try
             {
+                if (DemandVerification.TypeValidation(demande.type) == false)
+                    return -1;
+                if (DemandVerification.CheckIfDemandeExist(demande.UserId, demande.type) == true)
+                    return -2;
                 demande.Status = StatusDemande.EnCours;
                 await db.Demandes.AddAsync(demande);
                 await db.SaveChangesAsync();
-                return "demandecréeé";
+                return demande.Id;
             }
             catch
             {
-                return "pas crée ";
+                return 0;
             }
         }
-        internal async Task<bool> UpdateDemandeAsync(Demande demande)
+
+        internal static async Task<bool> UpdateDemandeAsync(Demande demande)
         {
             try
             {
@@ -104,14 +90,17 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> SetDemandeToAcceptedAsync(int id)
+        internal static async Task<bool> SetDemandeToAcceptedAsync(int id,int AdminId)
         {
             try
             {
                 var requests = db.Demandes.Where(r => r.Id == id);
+
                 foreach (var request in requests)
                 {
                     request.Status = "accepté";
+                    request.AdminId = AdminId;
+
                 }
                 return await db.SaveChangesAsync() >= 1;
             }
@@ -120,7 +109,7 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> SetDemandeToRefusedAsync(int id)
+        internal static async Task<bool> SetDemandeToRefusedAsync(int id, int AdminId)
         {
             try
             {
@@ -128,6 +117,7 @@ namespace serverapp
                 foreach (var request in requests)
                 {
                     request.Status = "refusé";
+                    request.AdminId = AdminId;
                 }
                 return await db.SaveChangesAsync() >= 1;
             }
@@ -136,8 +126,7 @@ namespace serverapp
                 return false;
             }
         }
-
-        internal async Task<bool> SetDemandeToPendingAsync(int id)
+        internal static async Task<bool> SetDemandeToPendingAsync(int id)
         {
             try
             {
@@ -153,7 +142,7 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> SetDemandeToBeCorrectedAsync(int id)
+        internal static async Task<bool> SetDemandeToBeCorrectedAsync(int id, int AdminId)
         {
             try
             {
@@ -161,6 +150,7 @@ namespace serverapp
                 foreach (var request in requests)
                 {
                     request.Status = "àcorriger";
+                    request.AdminId = AdminId;
                 }
                 return await db.SaveChangesAsync() >= 1;
             }
@@ -169,7 +159,7 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> DeleteDemandeAsync(int id)
+        internal static async Task<bool> DeleteDemandeAsync(int id)
         {
             try
             {

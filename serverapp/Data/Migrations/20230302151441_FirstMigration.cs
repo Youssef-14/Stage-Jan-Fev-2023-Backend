@@ -17,12 +17,12 @@ namespace serverapp.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Cin = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Cin = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Token = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(70)", maxLength: 70, nullable: false)
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -36,11 +36,12 @@ namespace serverapp.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", maxLength: 50, nullable: false),
+                    type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                    AdminId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,10 +61,7 @@ namespace serverapp.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Size = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DemandeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -91,13 +89,15 @@ namespace serverapp.Data.Migrations
                 name: "Index1",
                 table: "Users",
                 column: "Cin",
-                unique: true);
+                unique: true,
+                filter: "[Cin] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "Index2",
                 table: "Users",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
         }
 
         /// <inheritdoc />

@@ -6,12 +6,6 @@ using serverapp;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserService UserService;
-    public UserController()
-    {
-        this.UserService = new UserService(new AppDBContext());
-    }
-
     [HttpGet("get-all-users")]
     public async Task<IActionResult> Get()
     {

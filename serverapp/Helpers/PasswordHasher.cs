@@ -1,5 +1,4 @@
-﻿using System;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace serverapp
@@ -19,7 +18,6 @@ namespace serverapp
                 return builder.ToString();
             }
         }
-
         /*public static bool VerifyPassword(string password, string hashedPassword)
         {
             string hashedInputPassword = HashPassword(password);

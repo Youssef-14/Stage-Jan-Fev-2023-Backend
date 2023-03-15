@@ -14,17 +14,15 @@ namespace serverapp
     {
         [Key]
         public int Id { get; set; }
-        [MaxLength(50)]
         public string type { get; set; }
-        [MaxLength(50)]
         public DateTime Date { get; set; }
         [InverseProperty("demandes")]
         public User User { get; set; }
         [ForeignKey(name: "User")]
         public int UserId { get; set; }
-        [MaxLength(50)]
+        [ForeignKey(name: "Admin")]
+        public int AdminId { get; set; }
         public string Status { get; set; } = string.Empty;
-        [MaxLength(50)]
         public string Comment { get; set; } = string.Empty;
         public ICollection<File> Files { get; set; }
     }

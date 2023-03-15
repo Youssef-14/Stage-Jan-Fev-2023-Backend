@@ -7,7 +7,6 @@ namespace serverapp
     {
         public AppDBContext()
         {
-            
         }
 
         public DbSet<Demande> Demandes { get; set; }
@@ -16,6 +15,9 @@ namespace serverapp
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            /*services.AddDbContext<ApplicationDbContext>(options =>
+                 options.UseSqlite(
+                     Configuration.GetConnectionString("DefaultConnection")));*/
             //optionsBuilder.UseSqlite("Data Source=./Data/AppDB.db");
             optionsBuilder.UseSqlServer("Data Source=(localdb)\\Stage;Initial Catalog=stageapp;Integrated Security=True;MultipleActiveResultSets=True");
         }

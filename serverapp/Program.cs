@@ -68,38 +68,6 @@ app.UseHttpsRedirection();
 
 app.UseCors("CORSPolicy");
 
-//Department Controller
-//Department Controller
-DemandeService DemandeService = new DemandeService(new AppDBContext());
-
-
-app.MapPost("/create-demande", async (Demande demandeToCreate) =>
-{
-    string createSuccessful = await DemandeService.CreateDemandeAsync(demandeToCreate);
-
-    if (createSuccessful== "demandecréeé")
-    {
-        return Results.Ok("Create successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-app.MapPut("/update-demande", async (Demande demandeToUpdate) =>
-{
-    bool updateSuccessful = await DemandeService.UpdateDemandeAsync(demandeToUpdate);
-
-    if (updateSuccessful)
-    {
-        return Results.Ok("Update successful.");
-    }
-    else
-    {
-        return Results.BadRequest();
-    }
-}).WithTags("Demands Endpoints");
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

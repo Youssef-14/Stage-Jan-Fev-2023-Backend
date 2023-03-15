@@ -59,7 +59,7 @@ namespace serverapp
                 return false;
             }
         }
-        /*internal async static Task<IEnumerable<Data.File>> DeleteFilesByDemandIdAsync(int DemandId)
+        /*internal async static Task<IEnumerable<File>> DeleteFilesByDemandIdAsync(int DemandId)
         {
             using (var db = new AppDBContext())
             {

@@ -1,20 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using serverapp.Helpers;
 
 namespace serverapp
 {
     public class UserService
     {
-        private readonly AppDBContext db;
-        public UserService(AppDBContext db)
-        {
-            this.db = db;
-        }
-
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        private static readonly AppDBContext db = new AppDBContext();
+        public static async Task<IEnumerable<User>> GetUsersAsync()
         {
             return await db.Users.ToListAsync();
         }
-        internal async Task<User> GetUserByIdAsync(int id)
+        internal static async Task<User> GetUserByIdAsync(int id)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
@@ -23,14 +19,14 @@ namespace serverapp
             }
             return user;
         }
-        internal async Task<User> GetUserByEmailAsync(string email)
+        public static async Task<User> GetUserByEmailAsync(string email)
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
                 return null;
             return user;
         }
-        internal Task<User> GetUserByEmailAndPasswordAsync(AuthentificationModel auth)
+        internal static Task<User> GetUserByEmailAndPasswordAsync(AuthentificationModel auth)
         {
             var user =  db.Users.FirstOrDefaultAsync(u => u.Email == auth.Email && PasswordHasher.HashPassword(auth.Password) == u.Password);
             if (user == null)
@@ -38,13 +34,17 @@ namespace serverapp
             return user;
         }
         //
-        public async Task<string> CreateUserAsync(User user)
+        public static async Task<string> CreateUserAsync(User user)
         {
             try
             {
-                if (await CheckUserEmailExistAsync(user.Email))
+                if (UserVerification.EmailValidation( user.Email) == false)
+                    return "Email is not valid";
+                if (UserVerification.PasswordValidation( user.Password) == false)
+                    return "Password is not valid";
+                if (await UserVerification.CheckUserEmailExistAsync(db, user.Email))
                     return "Email already in use";
-                if (await CheckUserCinExistAsync(user.Cin))
+                if (await UserVerification.CheckUserCinExistAsync(db, user.Cin))
                     return "Cin already in use";
                 user.Type = "user";
                 user.Password = PasswordHasher.HashPassword(user.Password);
@@ -58,13 +58,13 @@ namespace serverapp
             }
         }
         //
-        public async Task<string> CreateAdminAsync(User user)
+        public static async Task<string> CreateAdminAsync(User user)
         {
             try
             {
-                if (await CheckUserEmailExistAsync(user.Email))
+                if (await UserVerification.CheckUserEmailExistAsync(db, user.Email))
                     return "Email already in use";
-                if (await CheckUserCinExistAsync(user.Email))
+                if (await UserVerification.CheckUserCinExistAsync(db, user.Email))
                     return "Cin already in use";
                 user.Type = "admin";
                 user.Password = PasswordHasher.HashPassword(user.Password);
@@ -77,7 +77,7 @@ namespace serverapp
                 return "Failed to create admin";
             }
         }
-        internal async Task<bool> UpdatePasswordAsync(UpdatePasswordModel pass)
+        internal static async Task<bool> UpdatePasswordAsync(UpdatePasswordModel pass)
         {
             //To be
             try
@@ -97,15 +97,31 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> UpdateUserAsync(User user)
+        internal static async Task<bool> UpdateUserAsync(User user)
         {
             try
             {
                 var requests = db.Users.Where(r => r.Id == user.Id);
                 foreach (var request in requests)
                 {
-                    request.Name = user.Name;
-                    request.Email = user.Email;
+                    if (request.Name != user.Name)
+                    {
+                        request.Name = user.Name;
+                    }
+                    
+                    if(request.Email != user.Email)
+                    {
+                        // Check if email already exists
+                        var existingUser = db.Users.FirstOrDefault(u => u.Email == user.Email);
+                        if (existingUser != null)
+                        {
+                            // Update the email of the existing user with the email of the user being updated
+                            existingUser.Email = request.Email;
+                        }
+
+                        request.Email = user.Email;
+                    }
+                    
                     //request.Cin = user.Cin;
                 }
                 return await db.SaveChangesAsync() >= 1;
@@ -115,7 +131,7 @@ namespace serverapp
                 return false;
             }
         }
-        internal async Task<bool> DeleteUserAsync(int id)
+        internal static async Task<bool> DeleteUserAsync(int id)
         {
             try
             {
@@ -131,15 +147,6 @@ namespace serverapp
             {
                 return false;
             }
-        }
-        //Service of service
-        private Task<bool> CheckUserEmailExistAsync(string email)
-        {
-            return db.Users.AnyAsync(u => u.Email == email);
-        }
-        private Task<bool> CheckUserCinExistAsync(string cin)
-        {
-            return db.Users.AnyAsync(u => u.Cin == cin);
         }
     }
 }

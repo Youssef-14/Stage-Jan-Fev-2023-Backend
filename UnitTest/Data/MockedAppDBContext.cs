@@ -1,18 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+using serverapp;
 
-namespace serverapp
+namespace AspWebApp.Tests
 {
-    public class DBContextMocked : DbContext
+    public class MockedAppDBContext : DbContext
     {
-        public DBContextMocked(DbContextOptions<DBContextMocked> options)
-            : base(options)
+        public MockedAppDBContext()
         {
         }
-        
+
         public DbSet<Demande> Demandes { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<File> Files { get; set; }
+        public DbSet<serverapp.File> Files { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=./Data/AppDB.db");
+        }
         [Obsolete]
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

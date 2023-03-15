@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.IO;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
 
 namespace serverapp.Controllers
@@ -7,15 +7,17 @@ namespace serverapp.Controllers
     [ApiController]
     public class FileController : ControllerBase
     {
+        [Authorize]
         [HttpPost]
         [Route("upload/{dossier}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> UploadFile(string dossier,IFormFile file)
+        public async Task<IActionResult> UploadFile(string dossier, IFormFile file)
         {
-            await WriteFile(dossier,file);
+            await WriteFile(dossier, file);
             return Ok();
         }
+        [Authorize]
         [HttpPost]
         [Route("uploads/{dossier}")]
         [ProducesResponseType(200)]
@@ -26,28 +28,30 @@ namespace serverapp.Controllers
             {
                 await WriteFile(dossier, file);
             }
-            return Ok();
+            return Ok(files.Count);
         }
-        private async Task<bool> WriteFile(string dossier,IFormFile file)
+        private async Task<bool> WriteFile(string dossier, IFormFile file)
         {
             bool result = false;
             string filename;
             try
             {
                 filename = Path.GetFileName(file.FileName);
-                string path = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\"+dossier);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), "uploads\\" + dossier);
 
-                if(!Directory.Exists(path))
+                if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
-
-                using (var stream = new FileStream(Path.Combine(path, filename) , FileMode.Create))  
+                using (var stream = new FileStream(Path.Combine(path, filename), FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
                 result = true;
-                
+                File fichier = new File();
+                fichier.Path = path+'\\'+file.FileName;
+                fichier.DemandeId = Convert.ToInt32(dossier);
+                FileService.CreateFileAsync(fichier).Wait();
             }
             catch
             {
@@ -55,8 +59,7 @@ namespace serverapp.Controllers
             }
             return result;
         }
-        
-
+        [Authorize]
         [HttpGet]
         [Route("download/{dossier}/{filename}")]
         public IActionResult DownloadFile(string dossier, string filename)
@@ -65,6 +68,7 @@ namespace serverapp.Controllers
             var fileStream = new FileStream(filePath, FileMode.Open);
             return File(fileStream, "application/octet-stream", filename);
         }
+        [Authorize]
         [HttpGet]
         [Route("downloads/{dossier}")]
         public IActionResult DownloadDirectory(string dossier)
@@ -83,6 +87,7 @@ namespace serverapp.Controllers
             memoryStream.Seek(0, SeekOrigin.Begin);
             return File(memoryStream, "application/zip", $"{dossier}.zip");
         }
+        [Authorize]
         [HttpGet]
         [Route("getallfiles/{dossier}")]
         public IActionResult GetAllFiles(string dossier)
@@ -99,7 +104,7 @@ namespace serverapp.Controllers
                 return NotFound("Directory not found");
             }
         }
-
+        [Authorize]
         [HttpDelete]
         [Route("delete/{dossier}/{filename}")]
         public IActionResult DeleteFile(string dossier, string filename)
@@ -115,6 +120,7 @@ namespace serverapp.Controllers
                 return NotFound("File not found");
             }
         }
+        [Authorize]
         [HttpDelete]
         [Route("deletes/{dossier}")]
         public IActionResult DeleteAllFiles(string dossier)
