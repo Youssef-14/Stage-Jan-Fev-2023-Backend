@@ -1,75 +1,20 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using serverapp;
-using System.Text;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddCors(options =>
+namespace serverapp
 {
-    options.AddPolicy("CORSPolicy",
-        builder =>
+    public class Program
+    {
+        public static void Main(string[] args)
         {
-            builder
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .WithOrigins("https://localhost:3000");
-        });
-});
+            CreateHostBuilder(args).Build().Run();
+        }
 
-
-builder.Services.AddControllers();
-
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(swaggerGenOptions =>
-{
-    swaggerGenOptions.SwaggerDoc("v1", new OpenApiInfo { Title = "ASP.NET", Version = "v1" });
-});
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-                .AddJwtBearer(o =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = false;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("veryverysecret......."))
-                    };
+                    webBuilder.UseStartup<Startup>();
                 });
-
-var app = builder.Build();
-
-
-
-
-
-
-app.MapControllers();
-
-app.UseSwagger();
-app.UseSwaggerUI(swaggerUIOptions =>
-{
-    swaggerUIOptions.DocumentTitle = "ASP.NET";
-    swaggerUIOptions.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API serving a very simple Post model.");
-    swaggerUIOptions.RoutePrefix = string.Empty;
-});
-
-app.UseHttpsRedirection();
-
-app.UseCors("CORSPolicy");
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.Run();
+    }
+}
